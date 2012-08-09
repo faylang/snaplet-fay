@@ -29,6 +29,31 @@ Clone this repository and install the package:
 cabal install
 ````
 
+Example Usage
+-------------
+
+Site.hs:
+```
+import           Snap.Snaplet.Fay
+
+app :: SnapletInit App App
+app = makeSnaplet "app" "An snaplet example application." Nothing $ do
+  -- Put Fay .hs files in src/Fay
+  -- The True argument will cause Snap Fay to print more information about what it's doing.
+  fay' <- nestSnaplet "fay" fay $ initFay "src/Fay" True
+  return $ App { _fay = fay' }
+```
+
+Application.hs:
+```
+import Snap.Snaplet.Fay
+
+data App = App { _fay :: Snaplet Fay }
+
+makeLens ''App
+```
+
+
 Development Status
 ------------------
 
