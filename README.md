@@ -4,7 +4,7 @@ Snaplet Fay
 Snaplet Fay integrates [Snap](http://www.snapframework.com) with
 [Fay](http://www.fay-lang.org). Snap is a
 [Haskell](http://www.haskell.org) web framework and Fay is a compiler
-for a proper subset of Haskell to JavaScript. Snaplet Fay integrates
+from a proper subset of Haskell to JavaScript. Snaplet Fay integrates
 them nicely with each other allowing automatic (re)compilation of Fay
 source files. Snap provides this for both static content and haskell
 sources preventing web server restarts and here we add Fay to this
@@ -34,7 +34,7 @@ Example Usage
 
 Site.hs:
 ```
-import           Snap.Snaplet.Fay
+import Snap.Snaplet.Fay
 
 app :: SnapletInit App App
 app = makeSnaplet "app" "An snaplet example application." Nothing $ do
