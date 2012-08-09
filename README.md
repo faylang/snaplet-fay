@@ -32,7 +32,7 @@ cabal install
 Development Status
 ------------------
 
-Snaplet Fay is functioning as is and will be updated to keep up with
+Snaplet Fay is functioning and will be updated to keep up with
 both Snap and Fay.
 
 
