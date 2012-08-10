@@ -1,0 +1,9 @@
+* Use config files, see http://snapframework.com/docs/tutorials/snaplets-tutorial
+* Typecheck with GHC (prefereably let Fay do it)
+* Test nested paths /fay-js/foo/bar.js
+* Optional jsbeautify of files written do disk
+* Fay splice <script type="text/fay">
+  * Print errors in HTTP response and in console
+  * See built-in splices https://github.com/snapframework/heist/tree/master/src/Text/Templating/Heist/Splices
+  * Check out heist posts on http://softwaresimply.blogspot.com
+

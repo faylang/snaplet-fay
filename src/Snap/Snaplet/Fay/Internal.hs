@@ -23,8 +23,29 @@ data Fay = Fay {
 
 data CompileMethod = CompileOnDemand | CompileAll
 
-compileFile :: Fay -> FilePath -> IO (Either F.CompileError String)
-compileFile config f = F.compileFile (def { F.configDirectoryIncludes = includeDirs config }) True f
+compileFile :: Fay -> FilePath -> IO (Maybe String)
+compileFile config f = do
+  res <- F.compileFile (def { F.configDirectoryIncludes = includeDirs config }) True f
+  case res of
+    Right out -> do
+      when (verbose config) . putStrLn $ "snaplet-fay: Compiled " ++ f
+      return $ Just out
+    Left err -> do
+      putStrLn $ "snaplet-fay: Error compiling " ++ f ++ ":"
+      print err
+      return Nothing
+
+-- | Check if a file should be recompiled, either when the hs file was
+-- | updated or the file hasn't been compiled at all.
+shouldCompile :: Fay -> FilePath -> IO Bool
+shouldCompile config hsFile = do
+  jsExists <- doesFileExist (jsPath config hsFile)
+  if not jsExists
+    then return True
+    else do
+      hsmod <- getModificationTime hsFile
+      jsmod <- getModificationTime (jsPath config hsFile)
+      return $ hsmod > jsmod
 
 -- | Checks the specified source folder and compiles all new and modified scripts.
 -- Also removes any js files whose Fay source has been deleted.
@@ -32,31 +53,25 @@ compileFile config f = F.compileFile (def { F.configDirectoryIncludes = includeD
 
 compileAll :: Fay -> IO ()
 compileAll config = do
-  -- Compile/recompile all hs files that don't have a corresponding js
+  -- Fetch all hs files that don't have a corresponding js
   -- file or has been updated since the js file was last compiled.
-  files <- do
-    fs <- extFiles "hs" (srcDir config)
-    flip filterM fs $ \f -> do
-      jsExists <- doesFileExist (jsPath f)
-      if not jsExists
-        then return True
-        else do
-          hsmod <- getModificationTime f
-          jsmod <- getModificationTime (jsPath f)
-          return $ hsmod > jsmod
+  files <- filterM (shouldCompile config) =<< extFiles "hs" (srcDir config)
 
+  -- Compile
   forM_ files $ \f -> do
-    when (verbose config) $ putStrLn ("compiling " ++ filename f)
-    F.compileFromTo (def { F.configDirectoryIncludes = includeDirs config }) True f (jsPath f)
+     res <- compileFile config f
+     case res of
+       Just s -> writeFile (jsPath config f) s
+       Nothing -> return ()
 
   -- Remove js files that don't have a corresponding source hs file
-  oldFiles <- extFiles "js" (destDir config) >>= filterM (liftM not . doesFileExist . hsPath)
-  forM_ oldFiles $ \f -> removeFile f >> when (verbose config) (putStrLn $ "Removed " ++ f)
+  oldFiles <- extFiles "js" (destDir config) >>= filterM (liftM not . doesFileExist . hsPath config)
+  forM_ oldFiles $ \f -> do
+    removeFile f
+    when (verbose config) . putStrLn $ "snaplet-fay: Removed orphaned " ++ f
 
   where
     -- Convert back and forth between the filepaths of hs and js files
-    jsPath f = destDir config </> filename (F.toJsName f)
-    hsPath f = srcDir config </> filename (toHsName f)
 
 
 -- | Helpers
@@ -78,3 +93,10 @@ toHsName x = case reverse x of
 -- | Gets the filepath of the files with the given file extension in a folder
 extFiles :: String -> FilePath -> IO [FilePath]
 extFiles ext dir = map (dir </>) . filter (`hasSuffix` ('.' : ext)) <$> getDirectoryContents dir
+
+-- | Convert back and forth between the locations of js and fay files
+jsPath :: Fay -> FilePath -> FilePath
+jsPath config f = destDir config </> filename (F.toJsName f)
+
+hsPath :: Fay -> FilePath -> FilePath
+hsPath config f = srcDir config </> filename (toHsName f)

@@ -40,11 +40,10 @@ library
     snap         == 0.9.*,
     snap-core    == 0.9.*
 
-
-
 Executable test
   if !flag(test)
     buildable: False
+
   ghc-options: -Wall
   hs-source-dirs: src
   main-is: Test.hs

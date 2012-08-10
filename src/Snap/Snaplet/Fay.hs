@@ -57,10 +57,9 @@ compileWithMethod CompileOnDemand = do
   let uri = srcDir cfg </> (toHsName . filename . BS.unpack . rqURI) req
   res <- liftIO (compileFile cfg uri)
   case res of
-    Right out -> writeLBS $ fromString out
-    Left err -> do
-      liftIO . putStrLn $ "Error compiling " ++ uri ++ ":"
-      liftIO $ print err
+    Just s -> writeLBS $ fromString s
+    Nothing -> return ()
+
 compileWithMethod CompileAll = do
    s <- getSnapletFilePath
    cfg <- get

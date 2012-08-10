@@ -42,7 +42,9 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
   -- Put Fay .hs files in src/Fay
   -- The verbosity Bool parameter tells Snap Fay how much information it should
   -- print about what it's doing.
-  fay' <- nestSnaplet "fay" fay $ initFay "src/Fay" True
+  -- CompileOnDemand compiles files when requested.
+  -- CompileAll compiles all files and removes js files whose hs source has been deleted.
+  fay' <- nestSnaplet "fay" fay $ initFay "src/Fay" True CompileOnDemand
   return $ App { _fay = fay' }
 ```
 
