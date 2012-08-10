@@ -22,7 +22,7 @@ Snap and Fay are available on hackage, but use chrisdone's master for now:
 
 ```
 cabal install snap
-git clone https://github.com/chrisdone/fay.git && cd fay && cabal install
+git clone https://github.com/faylang/fay.git && cd fay && cabal install
 ```
 
 Clone this repository and install the package:
