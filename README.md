@@ -8,8 +8,8 @@ from a proper subset of Haskell to JavaScript. Snaplet Fay integrates
 them nicely with each other allowing automatic (re)compilation of Fay
 source files. Snap provides this for both static content and haskell
 sources preventing web server restarts and here we add Fay to this
-list as well. Now we can seamlessly code Haskell for both front-end
-and back-end.
+list as well. This lets us write both front and back-end code in Haskell.
+
 
 Installation
 ------------
@@ -18,10 +18,11 @@ You will need Haskell, Snap and Fay installed. The simplest way to get
 up and running with Haskell is to install
 [The Haskell Platform](http://hackage.haskell.org/platform/).
 
-Snap and Fay are available on hackage:
+Snap and Fay are available on hackage, but use chrisdone's master for now:
 
 ```
-cabal install snap fay
+cabal install snap
+git clone https://github.com/chrisdone/fay.git && cd fay && cabal install
 ```
 
 Clone this repository and install the package:
@@ -39,7 +40,8 @@ import Snap.Snaplet.Fay
 app :: SnapletInit App App
 app = makeSnaplet "app" "An snaplet example application." Nothing $ do
   -- Put Fay .hs files in src/Fay
-  -- The True argument will cause Snap Fay to print more information about what it's doing.
+  -- The verbosity Bool parameter tells Snap Fay how much information it should
+  -- print about what it's doing.
   fay' <- nestSnaplet "fay" fay $ initFay "src/Fay" True
   return $ App { _fay = fay' }
 ```
@@ -74,3 +76,8 @@ cabal configure -ftest
 cabal build
 ./dist/build/test/test
 ```
+
+Contact
+-------
+
+File an issue, e-mail or visit `#fay @ irc.freenode.net`.

@@ -6,7 +6,7 @@ name:                snaplet-fay
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
 version:             0.1.0.0
-synopsis:            Fay integration for Snap that provides automatic (re)compilation during development
+synopsis:            Fay integration for Snap with automatic (re)compilation during development
 license:             BSD3
 license-file:        LICENSE
 author:              Adam Bergmark
@@ -31,6 +31,7 @@ library
 
   build-depends:
     base         == 4.5.*,
+    bytestring   == 0.9.*,
     data-default == 0.5.*,
     directory    == 1.1.*,
     fay          == 0.5.*,
@@ -50,6 +51,7 @@ Executable test
 
   build-depends:
     base         == 4.5.*,
+    bytestring   == 0.9.*,
     data-default == 0.5.*,
     directory    == 1.1.*,
     fay          == 0.5.*,

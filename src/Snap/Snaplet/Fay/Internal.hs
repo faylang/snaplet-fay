@@ -18,15 +18,20 @@ data Fay = Fay {
   , destDir :: FilePath
   , includeDirs :: [FilePath]
   , verbose :: Bool
+  , compileMethod :: CompileMethod
   }
 
+data CompileMethod = CompileOnDemand | CompileAll
+
+compileFile :: Fay -> FilePath -> IO (Either F.CompileError String)
+compileFile config f = F.compileFile (def { F.configDirectoryIncludes = includeDirs config }) True f
 
 -- | Checks the specified source folder and compiles all new and modified scripts.
 -- Also removes any js files whose Fay source has been deleted.
 -- At the moment all files are checked each request. This will change.
 
-buildFay :: Fay -> IO ()
-buildFay config = do
+compileAll :: Fay -> IO ()
+compileAll config = do
   -- Compile/recompile all hs files that don't have a corresponding js
   -- file or has been updated since the js file was last compiled.
   files <- do
