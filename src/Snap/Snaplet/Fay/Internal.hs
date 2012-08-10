@@ -34,11 +34,11 @@ buildFay config = do
     flip filterM fs $ \f -> do
       jsExists <- doesFileExist (jsPath f)
       if not jsExists
-      then return True
-      else do
-        hsmod <- getModificationTime f
-        jsmod <- getModificationTime (jsPath f)
-        return $ hsmod > jsmod
+        then return True
+        else do
+          hsmod <- getModificationTime f
+          jsmod <- getModificationTime (jsPath f)
+          return $ hsmod > jsmod
 
   forM_ files $ \f -> do
     when (verbose config) $ putStrLn ("compiling " ++ filename f)
