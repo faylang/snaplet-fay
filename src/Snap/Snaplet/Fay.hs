@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings       #-}
-{-# LANGUAGE ViewPatterns            #-}
 {-# LANGUAGE ScopedTypeVariables     #-}
 {-# OPTIONS -fno-warn-name-shadowing #-}
 

@@ -30,16 +30,16 @@ compileFile config f = do
   exists <- doesFileExist f
   if not exists
     then do
-      putStrLn $ "snaplet-fay: Could not find: " ++ (hsRelativePath f)
+      putStrLn $ "snaplet-fay: Could not find: " ++ hsRelativePath f
       return Nothing
     else do
       res <- F.compileFile (def { F.configDirectoryIncludes = includeDirs config }) True f
       case res of
         Right out -> do
-          verbosePut config $ "Compiled " ++ (hsRelativePath f)
+          verbosePut config $ "Compiled " ++ hsRelativePath f
           return $ Just out
         Left err -> do
-          putStrLn $ "snaplet-fay: Error compiling " ++ (hsRelativePath f) ++ ":"
+          putStrLn $ "snaplet-fay: Error compiling " ++ hsRelativePath f ++ ":"
           print err
           return Nothing
 
@@ -80,7 +80,7 @@ compileAll config = do
   oldFiles <- extFiles "js" (destDir config) >>= filterM (liftM not . doesFileExist . hsPath config)
   forM_ oldFiles $ \f -> do
     removeFile f
-    verbosePut config $ "Removed orphaned " ++ (jsRelativePath f)
+    verbosePut config $ "Removed orphaned " ++ jsRelativePath f
 
   where
     -- Convert back and forth between the filepaths of hs and js files.

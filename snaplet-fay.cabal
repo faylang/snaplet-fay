@@ -7,11 +7,13 @@ name:                snaplet-fay
 --                   | | | +--- code changes with no API change
 version:             0.1.0.0
 synopsis:            Fay integration for Snap with automatic (re)compilation during development
+description:         For more information, please see https://github.com/faylang/snaplet-fay
 license:             BSD3
 license-file:        LICENSE
 author:              Adam Bergmark
 maintainer:          adam@edea.se
-category:            Web
+homepage:            https://github.com/faylang/snaplet-fay
+category:            Web, Snap
 build-type:          Simple
 cabal-version:       >=1.8
 
