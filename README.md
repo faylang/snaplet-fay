@@ -51,11 +51,16 @@ data App = App { _fay :: Snaplet Fay }
 makeLens ''App
 ```
 
-Place your Fay .hs files in snaplets/fay/src.
+Run your application now.
 
-A snaplet config file will be generated in snaplets/fay/devel.cfg the
+A snaplet config file will be generated at snaplets/fay/devel.cfg the
 first time your application initializes the snaplet. The defaults are
 the recommended ones for development.
+
+Place your Fay .hs files in snaplets/fay/src. Note that a default
+devel.cfg will not be created if you have already created the fay
+directory, if this happens to you move snaplets/fay, start your
+application, and then move the files back into snaplets/fay.
 
 Development Status
 ------------------

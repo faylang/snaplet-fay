@@ -1,6 +1,4 @@
 dist
 test-dest
 example/log
-example/snaplets/fay/devel.cfg
 example/snaplets/fay/js
-

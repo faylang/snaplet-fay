@@ -8,7 +8,5 @@
 * 404 when a fay file doesn't exist
 * Document configuration
 * Why does Paths_snaplet_fay produce a warning?
-* Why is the old snaplet.cfg copied?
-* js files are not placed in fay/ instead of fay/js/
 * TODO has to recompile if dependencies (imports) changed, should perhaps skip compileAll mode?
 * Log messages should print relative paths
