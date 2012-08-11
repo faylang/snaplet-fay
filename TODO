@@ -1,6 +1,3 @@
-* Config file is not copied, see
-  * http://snapframework.com/docs/tutorials/snaplets-tutorial
-  * https://github.com/mightybyte/snaplet-postgresql-simple
 * Typecheck with GHC (prefereably let Fay do it)
 * Test nested paths /fay-js/foo/bar.js
 * Optional jsbeautify of files written do disk
@@ -9,6 +6,9 @@
   * See built-in splices https://github.com/snapframework/heist/tree/master/src/Text/Templating/Heist/Splices
   * Check out heist posts on http://softwaresimply.blogspot.com
 * 404 when a fay file doesn't exist
-* Use fixed srcDir, user doesn't need to specify
-* Put written js files into static or into snaplest/fay/js
 * Document configuration
+* Why does Paths_snaplet_fay produce a warning?
+* Why is the old snaplet.cfg copied?
+* js files are not placed in fay/ instead of fay/js/
+* TODO has to recompile if dependencies (imports) changed, should perhaps skip compileAll mode?
+* Log messages should print relative paths

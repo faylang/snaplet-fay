@@ -41,23 +41,29 @@ initFay = makeSnaplet "fay" description datadir $ do
   fp <- getSnapletFilePath
 
   (opts, errs) <- runWriterT $ do
-    srcDir           <- logErr "Must specify srcDir" $ C.lookup config "srcDir"
     compileMethodStr <- logErr "Must specify compileMethod" $ C.lookup config "compileMethod"
     compileMethod    <- case compileMethodStr of
                         Just x -> logErr "Invalid compileMethod" . return $ methodFromString x
                         Nothing -> return Nothing
     verbose          <- logErr "Must specify verbose" $ C.lookup config "verbose"
 
-    return (srcDir, verbose, compileMethod)
+    return (verbose, compileMethod)
 
   let fay = case opts of
-              (Just srcDir, Just verbose, Just compileMethod) -> Fay srcDir fp [srcDir] verbose compileMethod
+              (Just verbose, Just compileMethod) ->
+                Fay (toSrcDir fp) (toDestDir fp) [toSrcDir fp] verbose compileMethod
               _ -> error $ intercalate "\n" errs
 
   liftIO $ do
-    dirExists <-doesDirectoryExist fp
     -- Create the snaplet directory
-    unless dirExists . liftIO $ createDirectory fp
+    dirExists <- doesDirectoryExist fp
+    unless dirExists $ createDirectory fp
+    -- Create the src directory
+    dirExists <- doesDirectoryExist $ toSrcDir fp
+    unless dirExists . createDirectory $ toSrcDir fp
+    -- Create the js directory
+    dirExists <- doesDirectoryExist (toDestDir fp)
+    unless dirExists $ createDirectory (toDestDir fp)
 
   return fay
 
@@ -71,6 +77,11 @@ initFay = makeSnaplet "fay" description datadir $ do
         res <- liftIO m
         when (isNothing res) (tell [err])
         return res
+
+    toSrcDir :: FilePath -> FilePath
+    toSrcDir = (</> "src")
+    toDestDir :: FilePath -> FilePath
+    toDestDir = (</> "js")
 
 -- | Serves the compiled Fay scripts
 
@@ -90,7 +101,6 @@ compileWithMethod CompileOnDemand = do
     Nothing -> return ()
 
 compileWithMethod CompileAll = do
-   s <- getSnapletFilePath
-   cfg <- get
-   liftIO (compileAll cfg)
-   serveDirectory s
+  cfg <- get
+  liftIO (compileAll cfg)
+  serveDirectory (destDir cfg)
