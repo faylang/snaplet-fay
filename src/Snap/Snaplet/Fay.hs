@@ -9,7 +9,7 @@ module Snap.Snaplet.Fay (
        , fayServe
        ) where
 
-
+import           Control.Applicative
 import           Control.Monad
 import           Control.Monad.Reader
 import           Control.Monad.State.Class
@@ -83,8 +83,7 @@ initFay = makeSnaplet "fay" description datadir $ do
     toDestDir :: FilePath -> FilePath
     toDestDir = (</> "js")
 
--- | Serves the compiled Fay scripts
-
+-- | Serves the compiled Fay scripts using the chosen compile method.
 fayServe :: Handler b Fay ()
 fayServe = do
   cfg <- get
@@ -93,12 +92,14 @@ fayServe = do
 compileWithMethod :: CompileMethod -> Handler b Fay ()
 compileWithMethod CompileOnDemand = do
   cfg <- get
-  req <- getRequest
-  let uri = srcDir cfg </> (toHsName . filename . BS.unpack . rqURI) req
+  uri <- (srcDir cfg </>) . toHsName . filename . BS.unpack . rqURI <$> getRequest
   res <- liftIO (compileFile cfg uri)
   case res of
     Just s -> writeLBS $ fromString s
-    Nothing -> return ()
+    Nothing -> do
+      modifyResponse $ setResponseStatus 404 "Not Found"
+      writeBS "File not found."
+      finishWith =<< getResponse
 
 compileWithMethod CompileAll = do
   cfg <- get
