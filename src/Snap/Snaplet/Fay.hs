@@ -3,8 +3,7 @@
 {-# OPTIONS -fno-warn-name-shadowing #-}
 
 module Snap.Snaplet.Fay (
-         CompileMethod (..)
-       , Fay
+         Fay
        , initFay
        , fayServe
        ) where
@@ -51,23 +50,19 @@ initFay = makeSnaplet "fay" description datadir $ do
 
   let fay = case opts of
               (Just verbose, Just compileMethod, Just prettyPrint) ->
-                Fay (toSrcDir fp) (toDestDir fp) [toSrcDir fp] verbose compileMethod prettyPrint
+                Fay fp verbose compileMethod prettyPrint
               _ -> error $ intercalate "\n" errs
 
-  liftIO $ do
-    -- Create the snaplet directory
-    dirExists <- doesDirectoryExist fp
-    unless dirExists $ createDirectory fp
-    -- Create the src directory
-    dirExists <- doesDirectoryExist $ toSrcDir fp
-    unless dirExists . createDirectory $ toSrcDir fp
-    -- Create the js directory
-    dirExists <- doesDirectoryExist (toDestDir fp)
-    unless dirExists $ createDirectory (toDestDir fp)
+  -- Make sure snaplet/fay, snaplet/fay/src, snaplet/fay/js are present.
+  liftIO $ mapM_ createDirUnlessExists [fp, srcDir fay, destDir fay]
 
   return fay
 
   where
+    createDirUnlessExists fp = do
+      dirExists <- doesDirectoryExist fp
+      unless dirExists $ createDirectory fp
+
     datadir = Just $ liftM (++ "/resources") getDataDir
 
     description = "Automatic (re)compilation and serving of Fay files"
@@ -77,11 +72,6 @@ initFay = makeSnaplet "fay" description datadir $ do
         res <- liftIO m
         when (isNothing res) (tell [err])
         return res
-
-    toSrcDir :: FilePath -> FilePath
-    toSrcDir = (</> "src")
-    toDestDir :: FilePath -> FilePath
-    toDestDir = (</> "js")
 
 -- | Serves the compiled Fay scripts using the chosen compile method.
 fayServe :: Handler b Fay ()

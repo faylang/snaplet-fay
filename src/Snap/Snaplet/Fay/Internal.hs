@@ -14,13 +14,23 @@ import           System.FilePath
 -- | Configuration
 
 data Fay = Fay {
-    srcDir :: FilePath
-  , destDir :: FilePath
-  , includeDirs :: [FilePath]
+    snapletFilePath :: FilePath
   , verbose :: Bool
   , compileMethod :: CompileMethod
   , prettyPrint :: Bool
   }
+
+-- | Location of .hs files
+srcDir :: Fay -> FilePath
+srcDir = (</> "src") . snapletFilePath
+
+-- | Location of .js files
+destDir :: Fay -> FilePath
+destDir = (</> "js") . snapletFilePath
+
+-- | Where Fay should look for includes
+includeDirs :: Fay -> [FilePath]
+includeDirs = (:[]) . srcDir
 
 data CompileMethod = CompileOnDemand | CompileAll
 
