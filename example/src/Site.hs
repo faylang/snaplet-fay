@@ -9,25 +9,33 @@ module Site
   ) where
 
 ------------------------------------------------------------------------------
-import           Control.Applicative
+import           Control.Monad.Trans
+import           Data.Aeson
 import           Data.ByteString (ByteString)
-import           Data.Maybe
-import qualified Data.Text as T
+import           Data.Time.Clock
 import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Snaplet.Heist
 import           Snap.Snaplet.Fay
 import           Snap.Util.FileServe
-import           Text.Templating.Heist
 ------------------------------------------------------------------------------
 import           Application
+
+
+currentTimeAjax :: AppHandler ()
+currentTimeAjax = do
+  time <- liftIO getCurrentTime
+  modifyResponse . setContentType $ "text/json;charset=utf-8"
+  writeLBS $ encode . toJSON $ object ["time" .= show time]
 
 
 ------------------------------------------------------------------------------
 -- | The application's routes.
 routes :: [(ByteString, Handler App App ())]
-routes = [ ("fay", with fay fayServe)
-         , ("",          serveDirectory "static")
+routes = [
+           ("/ajax/current-time", currentTimeAjax)
+         , ("/fay", with fay fayServe)
+         , ("/static", serveDirectory "static")
          ]
 
 

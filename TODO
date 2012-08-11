@@ -8,3 +8,4 @@
 * Why does Paths_snaplet_fay produce a warning?
 * TODO has to recompile if dependencies (imports) changed, should perhaps skip compileAll mode?
 * Log messages should print relative paths
+* Compile errors should 500 and print compiler error

@@ -11,6 +11,16 @@ sources preventing web server restarts and here we add Fay to this
 list as well. This lets us write both front and back-end code in Haskell.
 
 
+Features
+--------
+
+* Compile and serve fay files automatically, no need to restart the
+  snap server.
+* Uses Fay's pretty print option (js-beautify) to create JS files that
+  are easier to debug.
+* Writes JS to disk to allow reading the generated source.
+
+
 Installation
 ------------
 
@@ -28,6 +38,7 @@ Clone this repository and install the package:
 ```
 cabal install
 ````
+
 
 Example Usage
 -------------
@@ -62,6 +73,7 @@ devel.cfg will not be created if you have already created the fay
 directory, if this happens to you move snaplets/fay, start your
 application, and then move the files back into snaplets/fay.
 
+
 Development Status
 ------------------
 
@@ -76,12 +88,17 @@ Fork on!
 
 Any enhancements are welcome.
 
+The github master usually requires the latest fay master, available at
+[faylang/fay](https://github.com/faylang/fay/).
+
+
 To run the tests, do:
 ```
 cabal configure -ftest
 cabal build
 ./dist/build/test/test
 ```
+
 
 Contact
 -------
