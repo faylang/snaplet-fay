@@ -17,6 +17,7 @@ config = Fay {
     , destDir = "test-dest"
     , includeDirs = ["test-files"]
     , verbose = False
+    , compileMethod = CompileAll
     }
 
 
@@ -40,7 +41,7 @@ rmf fp = doesFileExist fp >>= (`when` removeFile fp)
 main :: IO ()
 main = do
   mapM_ removeFile =<< (extFiles "js" . destDir) config
-  buildFay config
+  compileAll config
   len <- length <$> extFiles "js" (destDir config)
   assert "0" (len > 0)
 
@@ -50,9 +51,9 @@ main = do
   assertM "1" $ not <$> doesFileExist (destDir config </> "NewFile.js")
   touch $ srcDir config </> "NewFile.hs"
 
-  buildFay config
+  compileAll config
   assertM "2" $ doesFileExist (destDir config </> "NewFile.js")
   removeFile $ srcDir config </> "NewFile.hs"
 
-  buildFay config
+  compileAll config
   assertM "3" $ not <$> doesFileExist (destDir config </> "NewFile.js")
