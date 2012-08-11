@@ -15,6 +15,15 @@ category:            Web
 build-type:          Simple
 cabal-version:       >=1.8
 
+extra-source-files:  LICENSE
+
+data-files:
+  resources/devel.cfg
+
+source-repository head
+  type: git
+  location: https://github.com/faylang/snaplet-fay.git
+
 Flag test
   Description: Whether to build the test executable
   Default: False
@@ -27,18 +36,21 @@ library
     Snap.Snaplet.Fay
 
   other-modules:
-    Snap.Snaplet.Fay.Internal
+    Snap.Snaplet.Fay.Internal, Paths_snaplet_fay
+
 
   build-depends:
     base         == 4.5.*,
     bytestring   == 0.9.*,
+    configurator == 0.2.*,
     data-default == 0.5.*,
     directory    == 1.1.*,
-    fay          == 0.5.*,
+    fay          == 0.6.*,
     filepath     == 1.3.*,
     mtl          == 2.1.*,
     snap         == 0.9.*,
-    snap-core    == 0.9.*
+    snap-core    == 0.9.*,
+    transformers == 0.3.*
 
 Executable test
   if !flag(test)
@@ -51,10 +63,12 @@ Executable test
   build-depends:
     base         == 4.5.*,
     bytestring   == 0.9.*,
+    configurator == 0.2.*,
     data-default == 0.5.*,
     directory    == 1.1.*,
-    fay          == 0.5.*,
+    fay          == 0.6.*,
     filepath     == 1.3.*,
     mtl          == 2.1.*,
     snap         == 0.9.*,
-    snap-core    == 0.9.*
+    snap-core    == 0.9.*,
+    transformers == 0.3.*

@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings       #-}
 {-# LANGUAGE ViewPatterns            #-}
+{-# LANGUAGE ScopedTypeVariables     #-}
 {-# OPTIONS -fno-warn-name-shadowing #-}
 
 module Snap.Snaplet.Fay (
@@ -13,35 +14,63 @@ module Snap.Snaplet.Fay (
 import           Control.Monad
 import           Control.Monad.Reader
 import           Control.Monad.State.Class
-import           Data.String
+import           Control.Monad.Trans.Writer
 import qualified Data.ByteString.Char8 as BS
-import           Snap.Snaplet
+import qualified Data.Configurator as C
+import           Data.List
+import           Data.Maybe
+import           Data.String
 import           Snap.Core
+import           Snap.Snaplet
 import           Snap.Util.FileServe
 import           System.Directory
 import           System.FilePath
 
+import           Paths_snaplet_fay
 import           Snap.Snaplet.Fay.Internal
 
+methodFromString :: String -> Maybe CompileMethod
+methodFromString "CompileOnDemand" = Just CompileOnDemand
+methodFromString "CompileAll" = Just CompileAll
+methodFromString _ = Nothing
+
 -- | Snaplet initialization
+initFay :: SnapletInit b Fay
+initFay = makeSnaplet "fay" description datadir $ do
+  config <- getSnapletUserConfig
+  fp <- getSnapletFilePath
 
-initFay :: FilePath      -- ^ The location of the Fay source files
-        -> Bool          -- ^ Print information when compiling or deleting files
-        -> CompileMethod -- ^ CompileOnDemand: Compile the requested file only
-                         --   CompileAll: Compile all modified files on every request and
-                         --     delete orphaned js files
-        -> SnapletInit b Fay
-initFay srcDir verbose compileMethod =
-    makeSnaplet "fay"
-                "Fay integration that provides automatic (re)compilation during development"
-                Nothing $
-                 do
-                   fp <- getSnapletFilePath
-                   dirExists <- liftIO $ doesDirectoryExist fp
-                   -- Create the snaplet directory
-                   unless dirExists . liftIO $ createDirectory fp
-                   return $ Fay srcDir fp [srcDir] verbose compileMethod
+  (opts, errs) <- runWriterT $ do
+    srcDir           <- logErr "Must specify srcDir" $ C.lookup config "srcDir"
+    compileMethodStr <- logErr "Must specify compileMethod" $ C.lookup config "compileMethod"
+    compileMethod    <- case compileMethodStr of
+                        Just x -> logErr "Invalid compileMethod" . return $ methodFromString x
+                        Nothing -> return Nothing
+    verbose          <- logErr "Must specify verbose" $ C.lookup config "verbose"
 
+    return (srcDir, verbose, compileMethod)
+
+  let fay = case opts of
+              (Just srcDir, Just verbose, Just compileMethod) -> Fay srcDir fp [srcDir] verbose compileMethod
+              _ -> error $ intercalate "\n" errs
+
+  liftIO $ do
+    dirExists <-doesDirectoryExist fp
+    -- Create the snaplet directory
+    unless dirExists . liftIO $ createDirectory fp
+
+  return fay
+
+  where
+    datadir = Just $ liftM (++ "/resources") getDataDir
+
+    description = "fay fay fay"
+
+    logErr :: MonadIO m => t -> IO (Maybe a) -> WriterT [t] m (Maybe a)
+    logErr err m = do
+        res <- liftIO m
+        when (isNothing res) (tell [err])
+        return res
 
 -- | Serves the compiled Fay scripts
 

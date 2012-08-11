@@ -19,21 +19,31 @@ data Fay = Fay {
   , includeDirs :: [FilePath]
   , verbose :: Bool
   , compileMethod :: CompileMethod
-  }
+  } deriving Show
 
 data CompileMethod = CompileOnDemand | CompileAll
+                     deriving Show
+
+verbosePut :: Fay -> String -> IO ()
+verbosePut config = when (verbose config) . putStrLn . ("snaplet-fay: " ++ )
 
 compileFile :: Fay -> FilePath -> IO (Maybe String)
 compileFile config f = do
-  res <- F.compileFile (def { F.configDirectoryIncludes = includeDirs config }) True f
-  case res of
-    Right out -> do
-      when (verbose config) . putStrLn $ "snaplet-fay: Compiled " ++ f
-      return $ Just out
-    Left err -> do
-      putStrLn $ "snaplet-fay: Error compiling " ++ f ++ ":"
-      print err
+  exists <- doesFileExist f
+  if not exists
+    then do
+      putStrLn $ "snaplet-fay: Could not find: " ++ f
       return Nothing
+    else do
+      res <- F.compileFile (def { F.configDirectoryIncludes = includeDirs config }) True f
+      case res of
+        Right out -> do
+          verbosePut config $ "Compiled " ++ f
+          return $ Just out
+        Left err -> do
+          putStrLn $ "snaplet-fay: Error compiling " ++ f ++ ":"
+          print err
+          return Nothing
 
 -- | Check if a file should be recompiled, either when the hs file was
 -- | updated or the file hasn't been compiled at all.
@@ -68,7 +78,7 @@ compileAll config = do
   oldFiles <- extFiles "js" (destDir config) >>= filterM (liftM not . doesFileExist . hsPath config)
   forM_ oldFiles $ \f -> do
     removeFile f
-    when (verbose config) . putStrLn $ "snaplet-fay: Removed orphaned " ++ f
+    verbosePut config $ "Removed orphaned " ++ f
 
   where
     -- Convert back and forth between the filepaths of hs and js files
