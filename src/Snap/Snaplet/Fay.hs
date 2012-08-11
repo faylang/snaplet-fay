@@ -70,7 +70,7 @@ initFay = makeSnaplet "fay" description datadir $ do
   where
     datadir = Just $ liftM (++ "/resources") getDataDir
 
-    description = "fay fay fay"
+    description = "Automatic (re)compilation and serving of Fay files"
 
     logErr :: MonadIO m => t -> IO (Maybe a) -> WriterT [t] m (Maybe a)
     logErr err m = do
