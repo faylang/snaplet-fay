@@ -19,29 +19,27 @@ data Fay = Fay {
   , includeDirs :: [FilePath]
   , verbose :: Bool
   , compileMethod :: CompileMethod
-  } deriving Show
+  }
 
 data CompileMethod = CompileOnDemand | CompileAll
-                     deriving Show
 
-verbosePut :: Fay -> String -> IO ()
-verbosePut config = when (verbose config) . putStrLn . ("snaplet-fay: " ++ )
-
+-- | Compile a single file, print errors if they occur and return the
+-- | compiled source if successful.
 compileFile :: Fay -> FilePath -> IO (Maybe String)
 compileFile config f = do
   exists <- doesFileExist f
   if not exists
     then do
-      putStrLn $ "snaplet-fay: Could not find: " ++ f
+      putStrLn $ "snaplet-fay: Could not find: " ++ (hsRelativePath f)
       return Nothing
     else do
       res <- F.compileFile (def { F.configDirectoryIncludes = includeDirs config }) True f
       case res of
         Right out -> do
-          verbosePut config $ "Compiled " ++ f
+          verbosePut config $ "Compiled " ++ (hsRelativePath f)
           return $ Just out
         Left err -> do
-          putStrLn $ "snaplet-fay: Error compiling " ++ f ++ ":"
+          putStrLn $ "snaplet-fay: Error compiling " ++ (hsRelativePath f) ++ ":"
           print err
           return Nothing
 
@@ -59,54 +57,71 @@ shouldCompile config hsFile = do
 
 -- | Checks the specified source folder and compiles all new and modified scripts.
 -- Also removes any js files whose Fay source has been deleted.
--- At the moment all files are checked each request. This will change.
-
+-- All files are checked each request.
+--
+-- NOTE:
+--
+-- Currently import dependencies are not handled, if a dependency has
+-- changed the dependet will not be recompiled
 compileAll :: Fay -> IO ()
 compileAll config = do
   -- Fetch all hs files that don't have a corresponding js
   -- file or has been updated since the js file was last compiled.
   files <- filterM (shouldCompile config) =<< extFiles "hs" (srcDir config)
 
-  -- Compile
+  -- Compile.
   forM_ files $ \f -> do
      res <- compileFile config f
      case res of
        Just s -> writeFile (jsPath config f) s
        Nothing -> return ()
 
-  -- Remove js files that don't have a corresponding source hs file
+  -- Remove js files that don't have a corresponding source hs file.
   oldFiles <- extFiles "js" (destDir config) >>= filterM (liftM not . doesFileExist . hsPath config)
   forM_ oldFiles $ \f -> do
     removeFile f
-    verbosePut config $ "Removed orphaned " ++ f
+    verbosePut config $ "Removed orphaned " ++ (jsRelativePath f)
 
   where
-    -- Convert back and forth between the filepaths of hs and js files
+    -- Convert back and forth between the filepaths of hs and js files.
 
 
 -- | Helpers
 
--- | Checks if a string ends with another string
+-- | Checks if a string ends with another string.
 hasSuffix :: String -> String -> Bool
 hasSuffix s suffix = reverse suffix == take (length suffix) (reverse s)
 
--- | Extract the filename from a filepath
+-- | Extract the filename from a filepath.
 filename :: FilePath -> FilePath
 filename = reverse . takeWhile (/= '/') . reverse
 
--- | Convert a JS filename to a Haskell filename
+-- | Convert a JS filename to a Haskell filename.
 toHsName :: String -> String
 toHsName x = case reverse x of
                ('s':'j':'.': (reverse -> file)) -> file ++ ".hs"
                _ -> x
 
--- | Gets the filepath of the files with the given file extension in a folder
+-- | Gets the filepath of the files with the given file extension in a folder.
 extFiles :: String -> FilePath -> IO [FilePath]
 extFiles ext dir = map (dir </>) . filter (`hasSuffix` ('.' : ext)) <$> getDirectoryContents dir
 
--- | Convert back and forth between the locations of js and fay files
+-- | Convert from the location of a js file to the location of its source hs file.
 jsPath :: Fay -> FilePath -> FilePath
 jsPath config f = destDir config </> filename (F.toJsName f)
 
+-- | Convert from the location of a hs file to the location of the destination js file.
 hsPath :: Fay -> FilePath -> FilePath
 hsPath config f = srcDir config </> filename (toHsName f)
+
+-- | Get the relative path of a js file.
+jsRelativePath :: FilePath -> FilePath
+jsRelativePath f = "snaplets/fay/js" </> filename f
+
+-- | Get the relative path of a hs file.
+hsRelativePath :: FilePath -> FilePath
+hsRelativePath f = "snaplets/fay/src" </> filename f
+
+-- | Helper for printing messages when the verbose flag is set
+verbosePut :: Fay -> String -> IO ()
+verbosePut config = when (verbose config) . putStrLn . ("snaplet-fay: " ++ )
