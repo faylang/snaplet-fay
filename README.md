@@ -18,11 +18,10 @@ You will need Haskell, Snap and Fay installed. The simplest way to get
 up and running with Haskell is to install
 [The Haskell Platform](http://hackage.haskell.org/platform/).
 
-Snap and Fay are available on hackage, but use chrisdone's master for now:
+Snap and Fay are available on hackage:
 
 ```
-cabal install snap
-git clone https://github.com/faylang/fay.git && cd fay && cabal install
+cabal install snap fay
 ```
 
 Clone this repository and install the package:
@@ -52,12 +51,17 @@ data App = App { _fay :: Snaplet Fay }
 makeLens ''App
 ```
 
+Place your Fay .hs files in snaplets/fay/src.
+
+A snaplet config file will be generated in snaplets/fay/devel.cfg the
+first time your application initializes the snaplet. The defaults are
+the recommended ones for development.
 
 Development Status
 ------------------
 
-Snaplet Fay is functioning and will be updated to keep up with
-both Snap and Fay.
+Snaplet Fay is functioning and will be updated to keep up with both
+Snap and Fay.
 
 
 Contributions
