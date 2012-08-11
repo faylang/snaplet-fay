@@ -37,6 +37,7 @@ compileFile config f = do
       case res of
         Right out -> do
           verbosePut config $ "Compiled " ++ hsRelativePath f
+          writeFile (jsPath config f) out
           return $ Just out
         Left err -> do
           putStrLn $ "snaplet-fay: Error compiling " ++ hsRelativePath f ++ ":"
@@ -70,11 +71,7 @@ compileAll config = do
   files <- filterM (shouldCompile config) =<< extFiles "hs" (srcDir config)
 
   -- Compile.
-  forM_ files $ \f -> do
-     res <- compileFile config f
-     case res of
-       Just s -> writeFile (jsPath config f) s
-       Nothing -> return ()
+  forM_ files $ compileFile config
 
   -- Remove js files that don't have a corresponding source hs file.
   oldFiles <- extFiles "js" (destDir config) >>= filterM (liftM not . doesFileExist . hsPath config)
