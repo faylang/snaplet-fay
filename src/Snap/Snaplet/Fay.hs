@@ -45,12 +45,13 @@ initFay = makeSnaplet "fay" description datadir $ do
                         Just x -> logErr "Invalid compileMethod" . return $ methodFromString x
                         Nothing -> return Nothing
     verbose          <- logErr "Must specify verbose" $ C.lookup config "verbose"
+    prettyPrint      <- logErr "Must specify prettyPrint" $ C.lookup config "prettyPrint"
 
-    return (verbose, compileMethod)
+    return (verbose, compileMethod, prettyPrint)
 
   let fay = case opts of
-              (Just verbose, Just compileMethod) ->
-                Fay (toSrcDir fp) (toDestDir fp) [toSrcDir fp] verbose compileMethod
+              (Just verbose, Just compileMethod, Just prettyPrint) ->
+                Fay (toSrcDir fp) (toDestDir fp) [toSrcDir fp] verbose compileMethod prettyPrint
               _ -> error $ intercalate "\n" errs
 
   liftIO $ do

@@ -19,6 +19,7 @@ data Fay = Fay {
   , includeDirs :: [FilePath]
   , verbose :: Bool
   , compileMethod :: CompileMethod
+  , prettyPrint :: Bool
   }
 
 data CompileMethod = CompileOnDemand | CompileAll
@@ -33,7 +34,8 @@ compileFile config f = do
       putStrLn $ "snaplet-fay: Could not find: " ++ hsRelativePath f
       return Nothing
     else do
-      res <- F.compileFile (def { F.configDirectoryIncludes = includeDirs config }) True f
+      res <- F.compileFile def { F.configDirectoryIncludes = includeDirs config }
+                            (prettyPrint config) True f
       case res of
         Right out -> do
           verbosePut config $ "Compiled " ++ hsRelativePath f
