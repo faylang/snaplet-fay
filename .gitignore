@@ -2,3 +2,5 @@ dist
 test-dest
 example/log
 example/snaplets/fay/js
+*.hi
+*.o

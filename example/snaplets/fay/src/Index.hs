@@ -1,4 +1,11 @@
+{-# LANGUAGE EmptyDataDecls    #-}
+{-# LANGUAGE NoImplicitPrelude #-}
+{-# OPTIONS -Wall -fno-warn-name-shadowing #-}
+
 module Index where
+
+import Language.Fay.FFI
+import Language.Fay.Prelude
 
 import Dom
 
@@ -14,31 +21,21 @@ onload = do
 
   currentTime
   button <- byId "current-time-button"
-  addEvent button "click" currentTime
+  addEvent button "click" (const currentTime)
 
   return ()
 
+data CTR = CTR { time :: String }
+instance Foreign CTR
+
 currentTime :: Fay ()
-currentTime =
+currentTime = do
   ajaxJson "/ajax/current-time" handleResponse
-    where
-      handleResponse json = do
-        ctr <- jsonToCTR json
-        el <- byId "current-time"
-        setInnerHtml el (time ctr)
 
-data Json
-instance Foreign Json
+handleResponse :: CTR -> Fay ()
+handleResponse (CTR time) = do
+  el <- byId "current-time"
+  setInnerHtml el time
 
-data CurrentTimeResponse = CTR { time :: String }
-instance Foreign CurrentTimeResponse
-
-jsonToCTR :: Json -> Fay CurrentTimeResponse
-jsonToCTR json = do t <- attrS json "time"
-                    return $ CTR t
-
-ajaxJson :: String -> (Json -> Fay ()) -> Fay ()
+ajaxJson :: String -> (CTR -> Fay ()) -> Fay ()
 ajaxJson = ffi "jQuery.ajax(%1, { success : %2 })"
-
-attrS :: Foreign f => f -> String -> Fay String
-attrS = ffi "%1[%2]"

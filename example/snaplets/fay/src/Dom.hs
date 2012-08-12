@@ -1,7 +1,10 @@
-{-# LANGUAGE EmptyDataDecls #-}
+{-# LANGUAGE EmptyDataDecls    #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
 module Dom where
+
+import           Language.Fay.FFI
+import           Language.Fay.Prelude
 
 
 data Element
@@ -34,7 +37,7 @@ byTag = ffi "document.getElementsByTagName(%1)"
 byId :: String -> Fay Element
 byId = ffi "document.getElementById(%1)"
 
-addEvent :: Foreign f => Element -> String -> (Event -> Fay f) -> Fay ()
+addEvent :: Foreign f => f -> String -> (Event -> Fay ()) -> Fay ()
 addEvent = ffi "%1.addEventListener(%2,%3)"
 
 addOnload :: Foreign f => Fay f -> Fay ()
@@ -60,3 +63,4 @@ printS = ffi "console.log(%1)"
 
 print :: Foreign f => f -> Fay ()
 print = ffi "console.log(%1)"
+

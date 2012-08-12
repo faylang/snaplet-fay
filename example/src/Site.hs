@@ -26,7 +26,7 @@ currentTimeAjax :: AppHandler ()
 currentTimeAjax = do
   time <- liftIO getCurrentTime
   modifyResponse . setContentType $ "text/json;charset=utf-8"
-  writeLBS $ encode . toJSON $ object ["time" .= show time]
+  writeLBS $ encode . toJSON $ object ["instance" .= ("CTR" :: ByteString), "time" .= show time]
 
 
 ------------------------------------------------------------------------------

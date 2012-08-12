@@ -9,3 +9,4 @@
 * TODO has to recompile if dependencies (imports) changed, should perhaps skip compileAll mode?
 * Log messages should print relative paths
 * Option for not overwriting js files if they are newer than hs files (for debugging)
+* Where should snap/fay shared functionality be stored?
