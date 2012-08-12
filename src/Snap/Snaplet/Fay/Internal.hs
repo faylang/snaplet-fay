@@ -34,15 +34,17 @@ includeDirs = (:[]) . srcDir
 
 data CompileMethod = CompileOnDemand | CompileAll
 
+data CompileResult = Success String | NotFound | Error String
+
 -- | Compile a single file, print errors if they occur and return the
 -- | compiled source if successful.
-compileFile :: Fay -> FilePath -> IO (Maybe String)
+compileFile :: Fay -> FilePath -> IO CompileResult
 compileFile config f = do
   exists <- doesFileExist f
   if not exists
     then do
       putStrLn $ "snaplet-fay: Could not find: " ++ hsRelativePath f
-      return Nothing
+      return NotFound
     else do
       res <- F.compileFile def { F.configDirectoryIncludes = includeDirs config
                                , F.configPrettyPrint = prettyPrint config
@@ -51,11 +53,11 @@ compileFile config f = do
         Right out -> do
           verbosePut config $ "Compiled " ++ hsRelativePath f
           writeFile (jsPath config f) out
-          return $ Just out
+          return $ Success out
         Left err -> do
-          putStrLn $ "snaplet-fay: Error compiling " ++ hsRelativePath f ++ ":"
-          print err
-          return Nothing
+          let errString = "snaplet-fay: Error compiling " ++ hsRelativePath f ++ ":\n" ++ show err
+          putStrLn errString
+          return $ Error errString
 
 -- | Check if a file should be recompiled, either when the hs file was
 -- | updated or the file hasn't been compiled at all.

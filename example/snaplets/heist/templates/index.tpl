@@ -12,6 +12,11 @@
       <div>Current time:</div>
       <div id="current-time"><current-time/></div>
       <div><input id="current-time-button" type="button" value="Update current time"></div>
+
+      <br>
+
+      <div><a href="/fay/BrokenFile.js">See what happens when you try to load a file containing Syntax errors</a></div>
+      <br>
     </div>
   </body>
 </html>

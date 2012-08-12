@@ -85,10 +85,14 @@ compileWithMethod CompileOnDemand = do
   uri <- (srcDir cfg </>) . toHsName . filename . BS.unpack . rqURI <$> getRequest
   res <- liftIO (compileFile cfg uri)
   case res of
-    Just s -> writeLBS $ fromString s
-    Nothing -> do
+    Success s -> writeLBS $ fromString s
+    NotFound -> do
       modifyResponse $ setResponseStatus 404 "Not Found"
       writeBS "File not found."
+      finishWith =<< getResponse
+    Error err -> do
+      modifyResponse $ setResponseStatus 500 "Internal Server Error"
+      writeBS . BS.pack $ err
       finishWith =<< getResponse
 
 compileWithMethod CompileAll = do
