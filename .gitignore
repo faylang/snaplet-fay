@@ -4,3 +4,4 @@ example/log
 example/snaplets/fay/js
 *.hi
 *.o
+cabal-dev
