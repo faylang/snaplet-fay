@@ -7,6 +7,7 @@ module Index where
 import Language.Fay.FFI
 import Language.Fay.Prelude
 
+import Application.SharedTypes
 import Dom
 
 main :: Fay ()
@@ -25,17 +26,11 @@ onload = do
 
   return ()
 
-data CTR = CTR { time :: String }
-instance Foreign CTR
-
 currentTime :: Fay ()
 currentTime = do
-  ajaxJson "/ajax/current-time" handleResponse
+  ajaxJson "/ajax/current-time" $ \(CTR time) -> do
+    el <- byId "current-time"
+    setInnerHtml el time
 
-handleResponse :: CTR -> Fay ()
-handleResponse (CTR time) = do
-  el <- byId "current-time"
-  setInnerHtml el time
-
-ajaxJson :: String -> (CTR -> Fay ()) -> Fay ()
+ajaxJson :: Foreign a => String -> (a -> Fay ()) -> Fay ()
 ajaxJson = ffi "jQuery.ajax(%1, { success : %2 })"

@@ -15,7 +15,7 @@ Flag development
   Default: False
 
 Executable example
-  hs-source-dirs: src
+  hs-source-dirs: src snaplets/fay/src
   main-is: Main.hs
 
   Build-depends:

@@ -5,3 +5,4 @@ example/snaplets/fay/js
 *.hi
 *.o
 cabal-dev
+TAGS

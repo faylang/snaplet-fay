@@ -9,24 +9,26 @@ module Site
   ) where
 
 ------------------------------------------------------------------------------
-import           Control.Monad.Trans
-import           Data.Aeson
-import           Data.ByteString (ByteString)
-import           Data.Time.Clock
-import           Snap.Core
-import           Snap.Snaplet
-import           Snap.Snaplet.Heist
-import           Snap.Snaplet.Fay
-import           Snap.Util.FileServe
+import Control.Monad.Trans
+import Data.Aeson
+import Data.ByteString (ByteString)
+import Data.Time.Clock
+import Language.Fay.Show
+import Snap.Core
+import Snap.Snaplet
+import Snap.Snaplet.Fay
+import Snap.Snaplet.Heist
+import Snap.Util.FileServe
 ------------------------------------------------------------------------------
-import           Application
+import Application
+import Application.SharedTypes
 
 
 currentTimeAjax :: AppHandler ()
 currentTimeAjax = do
   time <- liftIO getCurrentTime
   modifyResponse . setContentType $ "text/json;charset=utf-8"
-  writeLBS $ encode . toJSON $ object ["instance" .= ("CTR" :: ByteString), "time" .= show time]
+  writeLBS $ encode $ showToFay (CTR (show time))
 
 
 ------------------------------------------------------------------------------
