@@ -1,4 +1,4 @@
-:set -isrc
+:set -isrc -isnaplets/fay/src
 :set -hide-package MonadCatchIO-mtl
 :set -hide-package monads-fd
 :set -XOverloadedStrings
