@@ -4,11 +4,16 @@
 
 module Index where
 
-import Language.Fay.FFI
-import Language.Fay.Prelude
+import           Language.Fay.FFI
+import           Language.Fay.Prelude
 
-import Application.SharedTypes
-import Dom
+-- | Time is shared between Snap and Fay
+-- | Location: src/Application/SharedTypes.hs
+-- import Time
+import           Application.SharedTypes
+-- | Dom is a Fay only module
+-- | Location: snaplets/fay/src
+import           Dom
 
 main :: Fay ()
 main = addOnload onload

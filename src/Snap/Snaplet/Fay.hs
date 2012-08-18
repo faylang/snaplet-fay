@@ -45,12 +45,14 @@ initFay = makeSnaplet "fay" description datadir $ do
                         Nothing -> return Nothing
     verbose          <- logErr "Must specify verbose" $ C.lookup config "verbose"
     prettyPrint      <- logErr "Must specify prettyPrint" $ C.lookup config "prettyPrint"
-
-    return (verbose, compileMethod, prettyPrint)
+    includeDirs      <- logErr "Must specify includeDirs" $ C.lookup config "includeDirs"
+    let inc = maybe [] (split ',') includeDirs
+    inc' <- liftIO $ mapM canonicalizePath inc
+    return (verbose, compileMethod, prettyPrint, inc')
 
   let fay = case opts of
-              (Just verbose, Just compileMethod, Just prettyPrint) ->
-                Fay fp verbose compileMethod prettyPrint
+              (Just verbose, Just compileMethod, Just prettyPrint, includeDirs) ->
+                Fay fp verbose compileMethod prettyPrint (fp : includeDirs)
               _ -> error $ intercalate "\n" errs
 
   -- Make sure snaplet/fay, snaplet/fay/src, snaplet/fay/js are present.
@@ -59,6 +61,11 @@ initFay = makeSnaplet "fay" description datadir $ do
   return fay
 
   where
+    -- TODO Use split package
+    split :: Eq a => a -> [a] -> [[a]]
+    split _ [] = []
+    split a as = takeWhile (/= a) as : split a (drop 1 $ dropWhile (/= a) as)
+
     createDirUnlessExists fp = do
       dirExists <- doesDirectoryExist fp
       unless dirExists $ createDirectory fp

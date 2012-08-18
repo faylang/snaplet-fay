@@ -32,7 +32,7 @@ Executable example
     , snap-server == 0.9.*
     , snap-loader-static == 0.9.*
     , snaplet-fay == 0.1.0.0
-    , fay
+    , fay == 0.6.1.*
     , text == 0.11.*
     , time >= 1.1 && < 1.5
     , xmlhtml >= 0.1

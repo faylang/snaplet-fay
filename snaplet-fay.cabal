@@ -68,7 +68,7 @@ Executable test
     configurator == 0.2.*,
     data-default == 0.5.*,
     directory    == 1.1.*,
-    fay          == 0.6.*,
+    fay          == 0.6.1.*,
     filepath     == 1.3.*,
     mtl          == 2.1.*,
     snap         == 0.9.*,

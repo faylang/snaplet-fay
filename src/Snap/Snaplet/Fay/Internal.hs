@@ -1,4 +1,4 @@
-{-# LANGUAGE ViewPatterns       #-}
+{-# LANGUAGE ViewPatterns #-}
 
 module Snap.Snaplet.Fay.Internal where
 
@@ -6,7 +6,7 @@ import           Control.Applicative
 import           Control.Monad
 import           Data.Default
 import qualified Language.Fay.Compiler as F
-import qualified Language.Fay.Types as F
+import qualified Language.Fay.Types    as F
 import           System.Directory
 import           System.FilePath
 
@@ -18,6 +18,7 @@ data Fay = Fay {
   , verbose :: Bool
   , compileMethod :: CompileMethod
   , prettyPrint :: Bool
+  , _includeDirs :: [FilePath]
   }
 
 -- | Location of .hs files
@@ -28,9 +29,9 @@ srcDir = (</> "src") . snapletFilePath
 destDir :: Fay -> FilePath
 destDir = (</> "js") . snapletFilePath
 
--- | Where Fay should look for includes
+-- | Where to check for imports
 includeDirs :: Fay -> [FilePath]
-includeDirs = (:[]) . srcDir
+includeDirs config = srcDir config : _includeDirs config
 
 data CompileMethod = CompileOnDemand | CompileAll
 
