@@ -19,25 +19,20 @@ Features
 * Uses Fay's pretty print option (js-beautify) to create JS files that
   are easier to debug.
 * Writes JS to disk to allow reading the generated source.
+* Share Fay source files between Haskell and Fay.
 
 
 Installation
 ------------
 
-You will need Haskell, Snap and Fay installed. The simplest way to get
-up and running with Haskell is to install
+You will need Haskell. The simplest way to get up and running with is
+to install
 [The Haskell Platform](http://hackage.haskell.org/platform/).
 
-Snap and Fay are available on hackage:
-
+Everything else is available on hackage:
 ```
-cabal install snap fay
+cabal install snaplet-fay
 ```
-
-Clone this repository and install the package:
-```
-cabal install
-````
 
 
 Example Usage
@@ -46,6 +41,8 @@ Example Usage
 Site.hs:
 ```
 import Snap.Snaplet.Fay
+
+routes = [..., ("/fay", with fay fayServe)]
 
 app :: SnapletInit App App
 app = makeSnaplet "app" "A snaplet example application." Nothing $ do
@@ -73,6 +70,8 @@ devel.cfg will not be created if you have already created the fay
 directory, if this happens to you move snaplets/fay, start your
 application, and then move the files back into snaplets/fay.
 
+Any requests to the specified directory (in this case /fay/) will
+compile the appropriate Fay file and serve it.
 
 Development Status
 ------------------
