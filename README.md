@@ -20,6 +20,7 @@ Features
   are easier to debug.
 * Writes JS to disk to allow reading the generated source.
 * Share Fay source files between Haskell and Fay.
+* Automatically encode/decode shared records by using the fayax functions.
 
 
 Installation

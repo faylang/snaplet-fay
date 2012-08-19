@@ -138,3 +138,4 @@ hsRelativePath f = "snaplets/fay/src" </> filename f
 -- | Helper for printing messages when the verbose flag is set
 verbosePut :: Fay -> String -> IO ()
 verbosePut config = when (verbose config) . putStrLn . ("snaplet-fay: " ++ )
+

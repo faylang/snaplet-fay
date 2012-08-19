@@ -3,6 +3,8 @@
     <title>Snaplet Fay Example Application</title>
     <link rel="stylesheet" type="text/css" href="/static/screen.css"/>
     <script src="/static/jquery.js"></script>
+    <script src="/static/underscore.js"></script>
+    <script src="/static/index.js"></script>
     <script src="/fay/Index.js"></script>
   </head>
   <body>
@@ -11,7 +13,22 @@
 
       <div>Current time:</div>
       <div id="current-time"><current-time/></div>
-      <div><input id="current-time-button" type="button" value="Update current time"></div>
+
+      <br>
+      <div id="loginStatus" class="status">
+        <ifLoggedIn>
+          You're logged in.
+        </ifLoggedIn>
+        <ifLoggedOut>
+          You're not logged in.
+        </ifLoggedOut>
+      </div>
+      <input id="viewLoginForm" type="button" value="Log in">
+      <input id="viewRegisterForm" type="button" value="Register">
+      <input id="logout" type="button" value="Log out">
+
+      <div id="formContainer">
+      </div>
 
       <br>
 

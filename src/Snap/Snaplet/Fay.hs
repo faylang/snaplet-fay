@@ -1,11 +1,14 @@
-{-# LANGUAGE OverloadedStrings       #-}
-{-# LANGUAGE ScopedTypeVariables     #-}
+{-# LANGUAGE OverloadedStrings   #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# OPTIONS -fno-warn-name-shadowing #-}
 
 module Snap.Snaplet.Fay (
          Fay
        , initFay
        , fayServe
+       , fayax
+       , toFayax
+       , fromFayax
        ) where
 
 import           Control.Applicative
@@ -13,11 +16,16 @@ import           Control.Monad
 import           Control.Monad.Reader
 import           Control.Monad.State.Class
 import           Control.Monad.Trans.Writer
-import qualified Data.ByteString.Char8 as BS
-import qualified Data.Configurator as C
+import qualified Data.Aeson                 as A
+import           Data.ByteString            (ByteString)
+import qualified Data.ByteString.Char8      as BS
+import qualified Data.ByteString.Lazy       as BL
+import qualified Data.Configurator          as C
+import           Data.Data
 import           Data.List
 import           Data.Maybe
 import           Data.String
+import           Language.Fay.Convert
 import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Util.FileServe
@@ -82,27 +90,67 @@ initFay = makeSnaplet "fay" description datadir $ do
 
 -- | Serves the compiled Fay scripts using the chosen compile method.
 fayServe :: Handler b Fay ()
-fayServe = do
-  cfg <- get
-  compileWithMethod (compileMethod cfg)
+fayServe = get >>= compileWithMethod . compileMethod
 
+-- | Send and receive JSON.
+-- | Automatically decodes a JSON request into a Fay record which is
+-- | passed to `g`. The handler `g` should then return a Fay record (of
+-- | a possibly separate type) which is encoded and passed back as a
+-- | JSON response.
+-- | If you only want to send JSON and handle input manually, use toFayax.
+-- | If you want to receive JSON and handle the response manually, use fromFayax
+fayax :: (Data f1, Read f1, Show f2) => (f1 -> Handler h1 h2 f2) -> Handler h1 h2 ()
+fayax g = do
+  res <- decode
+  case res of
+    Left body -> send500 $ Just body
+    Right res -> toFayax . g $ res
+
+-- | fayax only sending JSON.
+toFayax :: Show f2 => Handler h1 h2 f2 -> Handler h1 h2 ()
+toFayax g = do
+  modifyResponse . setContentType $ "text/json;charset=utf-8"
+  writeLBS . A.encode . showToFay =<< g
+
+-- | fayax only recieving JSON.
+fromFayax :: (Data f1, Read f1) => (f1 -> Handler h1 h2 ()) -> Handler h1 h2 ()
+fromFayax g = do
+  res <- decode
+  case res of
+    Left body -> send500 $ Just body
+    Right res -> g res
+
+decode :: (Data f1, Read f1) => Handler h1 h2 (Either ByteString f1)
+decode = do
+  body <- readRequestBody 1024 -- Nothing will break by abusing this :)!
+  res <- return $ A.decode body >>= readFromFay
+  return $ case res of
+    Nothing -> Left. BS.concat . BL.toChunks $ "Could not decode " `BL.append` body
+    Just x -> Right x
+
+-- | Compiles according to the specified method.
 compileWithMethod :: CompileMethod -> Handler b Fay ()
 compileWithMethod CompileOnDemand = do
   cfg <- get
   uri <- (srcDir cfg </>) . toHsName . filename . BS.unpack . rqURI <$> getRequest
   res <- liftIO (compileFile cfg uri)
   case res of
-    Success s -> writeLBS $ fromString s
-    NotFound -> do
-      modifyResponse $ setResponseStatus 404 "Not Found"
-      writeBS "File not found."
-      finishWith =<< getResponse
-    Error err -> do
-      modifyResponse $ setResponseStatus 500 "Internal Server Error"
-      writeBS . BS.pack $ err
-      finishWith =<< getResponse
-
+    Success s -> writeBS $ fromString s
+    NotFound -> send404 Nothing
+    Error err -> send500 . Just . BS.pack $ err
 compileWithMethod CompileAll = do
   cfg <- get
   liftIO (compileAll cfg)
   serveDirectory (destDir cfg)
+
+send404 :: Maybe ByteString -> Handler a b ()
+send404 msg = do
+  modifyResponse $ setResponseStatus 404 "Not Found"
+  writeBS $ fromMaybe "Not Found" msg
+  finishWith =<< getResponse
+
+send500 :: Maybe ByteString -> Handler a b ()
+send500 msg = do
+  modifyResponse $ setResponseStatus 500 "Internal Server Error"
+  writeBS $ fromMaybe "Internal Server Error" msg
+  finishWith =<< getResponse

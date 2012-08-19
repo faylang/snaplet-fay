@@ -1,8 +1,11 @@
-dist
-test-dest
-example/log
-example/snaplets/fay/js
 *.hi
 *.o
-cabal-dev
 TAGS
+cabal-dev
+dist
+example/fay
+example/log
+example/site_key.txt
+example/snaplets/fay/js
+example/users.json
+test-dest
