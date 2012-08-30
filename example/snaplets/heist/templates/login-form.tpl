@@ -5,6 +5,6 @@
   <label for="ul_password">Password</label>
   <input type="password" name="ul_password">
   <input type="checkbox" name="remember"> Remember me
-  <input class="submit" type="button" value="Log In">
+  <input class="submit" type="submit" value="Log In">
   <div class="status"></div>
 </form>

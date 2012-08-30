@@ -6,6 +6,6 @@
   <input type="password" name="password">
   <label for="user">Repeat Password</label>
   <input type="password" name="passwordConfirmation">
-  <input class="submit" type="button" value="Register">
+  <input class="submit" type="submit" value="Register">
   <div class="status"></div>
 </form>
