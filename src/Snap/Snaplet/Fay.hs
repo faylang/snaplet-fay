@@ -35,10 +35,10 @@ import           System.FilePath
 import           Paths_snaplet_fay
 import           Snap.Snaplet.Fay.Internal
 
-methodFromString :: String -> Maybe CompileMethod
-methodFromString "CompileOnDemand" = Just CompileOnDemand
-methodFromString "CompileAll" = Just CompileAll
-methodFromString _ = Nothing
+compileModeFromString :: String -> Maybe CompileMode
+compileModeFromString "Development" = Just Development
+compileModeFromString "Production" = Just Production
+compileModeFromString _ = Nothing
 
 -- | Snaplet initialization
 initFay :: SnapletInit b Fay
@@ -47,24 +47,26 @@ initFay = makeSnaplet "fay" description datadir $ do
   fp <- getSnapletFilePath
 
   (opts, errs) <- runWriterT $ do
-    compileMethodStr <- logErr "Must specify compileMethod" $ C.lookup config "compileMethod"
-    compileMethod    <- case compileMethodStr of
-                        Just x -> logErr "Invalid compileMethod" . return $ methodFromString x
+    compileModeStr <- logErr "Must specify compileMode" $ C.lookup config "compileMode"
+    compileMode    <- case compileModeStr of
+                        Just x -> logErr "Invalid compileMode" . return $ compileModeFromString x
                         Nothing -> return Nothing
     verbose          <- logErr "Must specify verbose" $ C.lookup config "verbose"
     prettyPrint      <- logErr "Must specify prettyPrint" $ C.lookup config "prettyPrint"
     includeDirs      <- logErr "Must specify includeDirs" $ C.lookup config "includeDirs"
     let inc = maybe [] (split ',') includeDirs
     inc' <- liftIO $ mapM canonicalizePath inc
-    return (verbose, compileMethod, prettyPrint, inc')
+    return (verbose, compileMode, prettyPrint, inc')
 
   let fay = case opts of
-              (Just verbose, Just compileMethod, Just prettyPrint, includeDirs) ->
-                Fay fp verbose compileMethod prettyPrint (fp : includeDirs)
+              (Just verbose, Just compileMode, Just prettyPrint, includeDirs) ->
+                Fay fp verbose compileMode prettyPrint (fp : includeDirs)
               _ -> error $ intercalate "\n" errs
 
   -- Make sure snaplet/fay, snaplet/fay/src, snaplet/fay/js are present.
   liftIO $ mapM_ createDirUnlessExists [fp, srcDir fay, destDir fay]
+
+  when (Production == compileMode fay) (liftIO $ compileAll fay)
 
   return fay
 
@@ -88,9 +90,9 @@ initFay = makeSnaplet "fay" description datadir $ do
         when (isNothing res) (tell [err])
         return res
 
--- | Serves the compiled Fay scripts using the chosen compile method.
+-- | Serves the compiled Fay scripts using the chosen compile mode.
 fayServe :: Handler b Fay ()
-fayServe = get >>= compileWithMethod . compileMethod
+fayServe = get >>= compileWithMode . compileMode
 
 -- | Send and receive JSON.
 -- | Automatically decodes a JSON request into a Fay record which is
@@ -128,9 +130,9 @@ decode = do
     Nothing -> Left. BS.concat . BL.toChunks $ "Could not decode " `BL.append` body
     Just x -> Right x
 
--- | Compiles according to the specified method.
-compileWithMethod :: CompileMethod -> Handler b Fay ()
-compileWithMethod CompileOnDemand = do
+-- | Compiles according to the specified mode.
+compileWithMode :: CompileMode -> Handler b Fay ()
+compileWithMode Development = do
   cfg <- get
   uri <- (srcDir cfg </>) . toHsName . filename . BS.unpack . rqURI <$> getRequest
   res <- liftIO (compileFile cfg uri)
@@ -138,10 +140,8 @@ compileWithMethod CompileOnDemand = do
     Success s -> writeBS $ fromString s
     NotFound -> send404 Nothing
     Error err -> send500 . Just . BS.pack $ err
-compileWithMethod CompileAll = do
-  cfg <- get
-  liftIO (compileAll cfg)
-  serveDirectory (destDir cfg)
+-- Production compilation has already been done.
+compileWithMode Production = get >>= serveDirectory . destDir
 
 send404 :: Maybe ByteString -> Handler a b ()
 send404 msg = do

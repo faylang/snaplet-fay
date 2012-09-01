@@ -16,7 +16,7 @@ import           System.FilePath
 data Fay = Fay {
     snapletFilePath :: FilePath
   , verbose :: Bool
-  , compileMethod :: CompileMethod
+  , compileMode :: CompileMode
   , prettyPrint :: Bool
   , _includeDirs :: [FilePath]
   }
@@ -33,7 +33,8 @@ destDir = (</> "js") . snapletFilePath
 includeDirs :: Fay -> [FilePath]
 includeDirs config = srcDir config : _includeDirs config
 
-data CompileMethod = CompileOnDemand | CompileAll
+data CompileMode = Development | Production
+                 deriving Eq
 
 data CompileResult = Success String | NotFound | Error String
 
@@ -60,31 +61,14 @@ compileFile config f = do
           putStrLn errString
           return $ Error errString
 
--- | Check if a file should be recompiled, either when the hs file was
--- | updated or the file hasn't been compiled at all.
-shouldCompile :: Fay -> FilePath -> IO Bool
-shouldCompile config hsFile = do
-  jsExists <- doesFileExist (jsPath config hsFile)
-  if not jsExists
-    then return True
-    else do
-      hsmod <- getModificationTime hsFile
-      jsmod <- getModificationTime (jsPath config hsFile)
-      return $ hsmod > jsmod
-
 -- | Checks the specified source folder and compiles all new and modified scripts.
 -- Also removes any js files whose Fay source has been deleted.
 -- All files are checked each request.
---
--- NOTE:
---
--- Currently import dependencies are not handled, if a dependency has
--- changed the dependet will not be recompiled
 compileAll :: Fay -> IO ()
 compileAll config = do
-  -- Fetch all hs files that don't have a corresponding js
-  -- file or has been updated since the js file was last compiled.
-  files <- filterM (shouldCompile config) =<< extFiles "hs" (srcDir config)
+  -- Find files, only checks the root snaplet directory
+  -- TODO check subdirs.
+  files <- extFiles "hs" (srcDir config)
 
   -- Compile.
   forM_ files $ compileFile config
@@ -138,4 +122,3 @@ hsRelativePath f = "snaplets/fay/src" </> filename f
 -- | Helper for printing messages when the verbose flag is set
 verbosePut :: Fay -> String -> IO ()
 verbosePut config = when (verbose config) . putStrLn . ("snaplet-fay: " ++ )
-
