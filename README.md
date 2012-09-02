@@ -14,13 +14,15 @@ list as well. This lets us write both front and back-end code in Haskell.
 Features
 --------
 
-* Compile and serve fay files automatically, no need to restart the
+* Compile and serve fay files on request, no need to restart the
   snap server.
+* Production mode to pre-compile all fay files.
 * Uses Fay's pretty print option (js-beautify) to create JS files that
   are easier to debug.
 * Writes JS to disk to allow reading the generated source.
 * Share Fay source files between Haskell and Fay.
-* Automatically encode/decode shared records by using the fayax functions.
+* Automatically encode/decode records shared between Snap and Fay by
+  using the fayax functions.
 
 
 Installation
@@ -74,6 +76,7 @@ application, and then move the files back into snaplets/fay.
 Any requests to the specified directory (in this case /fay/) will
 compile the appropriate Fay file and serve it.
 
+
 Development Status
 ------------------
 
@@ -90,14 +93,6 @@ Any enhancements are welcome.
 
 The github master usually requires the latest fay master, available at
 [faylang/fay](https://github.com/faylang/fay/).
-
-
-To run the tests, do:
-```
-cabal configure -ftest
-cabal build
-./dist/build/test/test
-```
 
 
 Contact

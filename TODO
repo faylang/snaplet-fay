@@ -1,12 +1,5 @@
-* Typecheck with GHC (preferably let Fay do it)
-* Test nested paths /fay-js/foo/bar.js
 * Fay splice <script type="text/fay">
   * Print errors in HTTP response and in console
   * See built-in splices https://github.com/snapframework/heist/tree/master/src/Text/Templating/Heist/Splices
   * Check out heist posts on http://softwaresimply.blogspot.com
-* Document configuration
-* Why does Paths_snaplet_fay produce a warning?
-* TODO has to recompile if dependencies (imports) changed, should perhaps skip compileAll mode?
-* Log messages should print relative paths
 * Option for not overwriting js files if they are newer than hs files (for debugging)
-* Where should snap/fay shared functionality be stored?

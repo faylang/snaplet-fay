@@ -35,11 +35,6 @@ import           System.FilePath
 import           Paths_snaplet_fay
 import           Snap.Snaplet.Fay.Internal
 
-compileModeFromString :: String -> Maybe CompileMode
-compileModeFromString "Development" = Just Development
-compileModeFromString "Production" = Just Production
-compileModeFromString _ = Nothing
-
 -- | Snaplet initialization
 initFay :: SnapletInit b Fay
 initFay = makeSnaplet "fay" description datadir $ do
@@ -90,6 +85,11 @@ initFay = makeSnaplet "fay" description datadir $ do
         when (isNothing res) (tell [err])
         return res
 
+    compileModeFromString :: String -> Maybe CompileMode
+    compileModeFromString "Development" = Just Development
+    compileModeFromString "Production" = Just Production
+    compileModeFromString _ = Nothing
+
 -- | Serves the compiled Fay scripts using the chosen compile mode.
 fayServe :: Handler b Fay ()
 fayServe = do
@@ -124,6 +124,7 @@ fromFayax g = do
     Left body -> send500 $ Just body
     Right res -> g res
 
+-- | Read the request input and convert to a Fay value.
 decode :: (Data f1, Read f1) => Handler h1 h2 (Either ByteString f1)
 decode = do
   body <- readRequestBody 1024 -- Nothing will break by abusing this :)!
@@ -145,12 +146,14 @@ compileWithMode Development = do
 -- Production compilation has already been done.
 compileWithMode Production = get >>= serveDirectory . destDir
 
+-- | Respond with Not Found
 send404 :: Maybe ByteString -> Handler a b ()
 send404 msg = do
   modifyResponse $ setResponseStatus 404 "Not Found"
   writeBS $ fromMaybe "Not Found" msg
   finishWith =<< getResponse
 
+-- | Respond with Internal Server Error
 send500 :: Maybe ByteString -> Handler a b ()
 send500 msg = do
   modifyResponse $ setResponseStatus 500 "Internal Server Error"

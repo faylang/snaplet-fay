@@ -12,7 +12,6 @@ import           System.FilePath
 
 
 -- | Configuration
-
 data Fay = Fay {
     snapletFilePath :: FilePath
   , verbose :: Bool
@@ -33,9 +32,11 @@ destDir = (</> "js") . snapletFilePath
 includeDirs :: Fay -> [FilePath]
 includeDirs config = srcDir config : _includeDirs config
 
+-- | Compile on every request or when Snap starts.
 data CompileMode = Development | Production
                  deriving Eq
 
+-- | Used by callers of compileFile to get the status of compilation.
 data CompileResult = Success String | NotFound | Error String
 
 -- | Compile a single file, print errors if they occur and return the
@@ -111,14 +112,14 @@ jsPath config f = destDir config </> filename (F.toJsName f)
 hsPath :: Fay -> FilePath -> FilePath
 hsPath config f = srcDir config </> filename (toHsName f)
 
--- | Get the relative path of a js file.
+-- | Relative path to a js file.
 jsRelativePath :: FilePath -> FilePath
 jsRelativePath f = "snaplets/fay/js" </> filename f
 
--- | Get the relative path of a hs file.
+-- | Relative path to a hs file.
 hsRelativePath :: FilePath -> FilePath
 hsRelativePath f = "snaplets/fay/src" </> filename f
 
--- | Helper for printing messages when the verbose flag is set
+-- | Print log messages when the verbose flag is set
 verbosePut :: Fay -> String -> IO ()
 verbosePut config = when (verbose config) . putStrLn . ("snaplet-fay: " ++ )
