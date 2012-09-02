@@ -92,7 +92,9 @@ initFay = makeSnaplet "fay" description datadir $ do
 
 -- | Serves the compiled Fay scripts using the chosen compile mode.
 fayServe :: Handler b Fay ()
-fayServe = get >>= compileWithMode . compileMode
+fayServe = do
+  modifyResponse . setContentType $ "text/javascript;charset=utf-8"
+  get >>= compileWithMode . compileMode
 
 -- | Send and receive JSON.
 -- | Automatically decodes a JSON request into a Fay record which is

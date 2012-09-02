@@ -49,7 +49,6 @@ loginOnload = formOnload "#viewLoginForm" requestLoginHtml
 
 requestHtml :: String -> Fay () -> Fay ()ick
 requestHtml url submitAction = do
-  printS "requestHtml"
   formContainer <- select "#formContainer"
   hide "slow" formContainer
   ajaxHtml url $ \h -> void $ do
