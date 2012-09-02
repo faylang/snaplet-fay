@@ -5,7 +5,7 @@ name:                snaplet-fay
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.1.0.0
+version:             0.2.0.0
 synopsis:            Fay integration for Snap with automatic (re)compilation during development
 description:         Fay integration for Snap with automatic (re)compilation during development.
                      For more information, please see <https://github.com/faylang/snaplet-fay>.
@@ -28,10 +28,6 @@ source-repository head
   type: git
   location: https://github.com/faylang/snaplet-fay.git
 
-Flag test
-  Description: Whether to build the test executable
-  Default: False
-
 library
   ghc-options: -Wall
   hs-source-dirs: src
@@ -49,29 +45,7 @@ library
     configurator == 0.2.*,
     data-default >= 0.4,
     directory    == 1.1.*,
-    fay          >= 0.7,
-    filepath     == 1.3.*,
-    mtl          == 2.1.*,
-    snap         == 0.9.*,
-    snap-core    == 0.9.*,
-    transformers == 0.3.*
-
-Executable test
-  if !flag(test)
-    buildable: False
-
-  ghc-options: -Wall
-  hs-source-dirs: src
-  main-is: Test.hs
-
-  build-depends:
-    aeson        == 0.6.*,
-    base         == 4.5.*,
-    bytestring   == 0.9.*,
-    configurator == 0.2.*,
-    data-default >= 0.4,
-    directory    == 1.1.*,
-    fay          >= 0.7,
+    fay          >= 0.9.1,
     filepath     == 1.3.*,
     mtl          == 2.1.*,
     snap         == 0.9.*,
