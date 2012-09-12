@@ -77,6 +77,13 @@ Any requests to the specified directory (in this case /fay/) will
 compile the appropriate Fay file and serve it.
 
 
+Example Application
+-------------------
+
+There is an example available in the `example` directory. It requires
+[fay-jquery](http://www.github.com/faylang/fay-jquery).
+
+
 Development Status
 ------------------
 

@@ -50,8 +50,7 @@ compileFile config f = do
       return NotFound
     else do
       res <- F.compileFile def { F.configDirectoryIncludes = includeDirs config
-                               , F.configPrettyPrint = prettyPrint config
-                               , F.configAutorun = True } f
+                               , F.configPrettyPrint = prettyPrint config } f
       case res of
         Right out -> do
           verbosePut config $ "Compiled " ++ hsRelativePath f
