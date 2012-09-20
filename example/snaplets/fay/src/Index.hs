@@ -47,7 +47,7 @@ registrationOnload = formOnload "#viewRegisterForm" requestRegisterHtml
 loginOnload :: Fay ()
 loginOnload = formOnload "#viewLoginForm" requestLoginHtml
 
-requestHtml :: String -> Fay () -> Fay ()ick
+requestHtml :: String -> Fay () -> Fay ()
 requestHtml url submitAction = do
   formContainer <- select "#formContainer"
   hide "slow" formContainer
