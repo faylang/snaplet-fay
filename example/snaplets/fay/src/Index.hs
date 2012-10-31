@@ -35,8 +35,9 @@ onload = void $ do
   setTimeout 5000 currentTime
 
 currentTime :: Fay ()
-currentTime =
-  ajaxJson "/ajax/current-time" $ \(Time time) -> void $ select "#current-time" >>= setHtml time
+currentTime = do
+  Time time <- sync $ ajaxJson "/ajax/current-time"
+  void $ select "#current-time" >>= setHtml time
 
 formOnload :: String -> Fay () -> Fay ()
 formOnload buttonSel getForm = void $ select buttonSel >>= click getForm
@@ -51,10 +52,10 @@ requestHtml :: String -> Fay () -> Fay ()
 requestHtml url submitAction = do
   formContainer <- select "#formContainer"
   hide "slow" formContainer
-  ajaxHtml url $ \h -> void $ do
-    setHtml h formContainer
-    child "form" formContainer >>= submit submitAction
-    jShow "slow" formContainer
+  h <- sync $ ajaxHtml url
+  setHtml h formContainer
+  child "form" formContainer >>= submit submitAction
+  void $ jShow "slow" formContainer
 
 requestRegisterHtml :: Fay ()
 requestRegisterHtml = requestHtml "/ajax/register-form" submitRegister
@@ -82,7 +83,9 @@ submitLogin = do
       select "#formContainer" >>= hide "fast"
 
 submitLogout :: Fay ()
-submitLogout = ajax "/ajax/logout" (void $ select "#loginStatus" >>= showStatus Notice "You have been logged out.")
+submitLogout = do
+  sync $ ajax "/ajax/logout"
+  void $ select "#loginStatus" >>= showStatus Notice "You have been logged out."
 
 data Status = Error | Notice
 
@@ -106,7 +109,7 @@ formJson = ffi "Helpers.formJson(%1)"
 jPost :: (Foreign f, Foreign g) => String -> f -> (g -> Fay ()) -> Fay ()
 jPost = ffi "jQuery.ajax(%1, { data: JSON.stringify(%2), type: 'POST', processData: false, contentType: 'text/json', success: %3 })"
 
-ajax :: String -> Fay () -> Fay ()
+ajax :: String -> (() -> Fay ()) -> Fay ()
 ajax = ffi "jQuery.ajax(%1, { success : %2 })"
 
 ajaxJson :: Foreign f => String -> (f -> Fay ()) -> Fay ()
