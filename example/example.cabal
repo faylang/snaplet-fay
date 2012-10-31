@@ -31,7 +31,7 @@ Executable example
     , snap-core == 0.9.*
     , snap-server == 0.9.*
     , snap-loader-static == 0.9.*
-    , snaplet-fay == 0.2.0.0
+    , snaplet-fay == 0.3.0.0
     , fay
     , fay-jquery
     , text == 0.11.*

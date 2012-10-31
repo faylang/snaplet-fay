@@ -5,8 +5,7 @@ module Snap.Snaplet.Fay.Internal where
 import           Control.Applicative
 import           Control.Monad
 import           Data.Default
-import qualified Language.Fay.Compiler as F
-import qualified Language.Fay.Types    as F
+import qualified Language.Fay        as F
 import           System.Directory
 import           System.FilePath
 
