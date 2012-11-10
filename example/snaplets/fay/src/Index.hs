@@ -20,7 +20,7 @@ void :: Fay f -> Fay ()
 void f = f >> return ()
 
 main :: Fay ()
-main = mapM_ addOnload [onload, registrationOnload, loginOnload, void (select "#logout" >>= click submitLogout)]
+main = mapM_ addOnload [onload, registrationOnload, loginOnload, void (select "#logout" >>= click (const submitLogout))]
 
 (=<<) :: (a -> Fay b) -> Fay a -> Fay b
 (=<<) = flip (>>=)
@@ -39,7 +39,7 @@ currentTime =
   ajaxJson "/ajax/current-time" $ \(Time time) -> void $ select "#current-time" >>= setHtml time
 
 formOnload :: String -> Fay () -> Fay ()
-formOnload buttonSel getForm = void $ select buttonSel >>= click getForm
+formOnload buttonSel getForm = void $ select buttonSel >>= click (const getForm)
 
 registrationOnload :: Fay ()
 registrationOnload = formOnload "#viewRegisterForm" requestRegisterHtml
@@ -53,7 +53,7 @@ requestHtml url submitAction = do
   hide "slow" formContainer
   ajaxHtml url $ \h -> void $ do
     setHtml h formContainer
-    child "form" formContainer >>= submit submitAction
+    child "form" formContainer >>= submit (\e -> preventDefault e >> submitAction)
     jShow "slow" formContainer
 
 requestRegisterHtml :: Fay ()
@@ -121,11 +121,5 @@ hide = ffi "jQuery(%2).hide(%1)"
 jShow :: String -> JQuery -> Fay JQuery
 jShow = ffi "jQuery(%2).show(%1)"
 
-click :: Fay () -> JQuery -> Fay JQuery
-click = ffi "jQuery(%2).click(%1)"
-
 child :: String -> JQuery -> Fay JQuery
 child = ffi "jQuery(%1,%2)"
-
-submit :: Fay () -> JQuery -> Fay JQuery
-submit = ffi "jQuery(%2).submit(function () { %1(); return false; })"

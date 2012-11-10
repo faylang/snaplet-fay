@@ -9,8 +9,6 @@ import           Language.Fay.Prelude
 
 data Element
 instance Foreign Element
-data Event
-instance Foreign Event
 data Global
 instance Foreign Global
 data Document
@@ -29,12 +27,6 @@ getDocument = ffi "document"
 
 addOnload :: Foreign f => Fay f -> Fay ()
 addOnload = ffi "window.addEventListener(\"load\", %1)"
-
-stopProp :: Event -> Fay ()
-stopProp = ffi "%1.stopPropagation()"
-
-preventDefault :: Event -> Fay ()
-preventDefault = ffi "%1.preventDefault()"
 
 createElement :: String -> Fay Element
 createElement = ffi "document.createElement(%1)"
