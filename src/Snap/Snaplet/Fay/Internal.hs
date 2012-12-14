@@ -4,6 +4,8 @@ module Snap.Snaplet.Fay.Internal where
 
 import           Control.Applicative
 import           Control.Monad
+import qualified Data.Aeson as A
+import qualified Data.ByteString.Lazy.Char8 as C
 import           Data.Default
 import qualified Language.Fay        as F
 import           System.Directory
@@ -48,7 +50,7 @@ compileFile config f = do
       putStrLn $ "snaplet-fay: Could not find: " ++ hsRelativePath f
       return NotFound
     else do
-      res <- F.compileFile (F.addConfigDirectoryIncludes (includeDirs config) 
+      res <- F.compileFile (F.addConfigDirectoryIncludes (includeDirs config)
                             def { F.configPrettyPrint = prettyPrint config }) f
       case res of
         Right out -> do
@@ -58,7 +60,9 @@ compileFile config f = do
         Left err -> do
           let errString = "snaplet-fay: Error compiling " ++ hsRelativePath f ++ ":\n" ++ show err
           putStrLn errString
-          return $ Error errString
+          -- return Success so the browser will treat this as a normal JavaScript file.
+          -- As of writing this, this means that Error is not used.
+          return $ Success $ "console.error('" ++ (C.unpack . A.encode) errString ++ "');"
 
 -- | Checks the specified source folder and compiles all new and modified scripts.
 -- Also removes any js files whose Fay source has been deleted.
@@ -77,9 +81,6 @@ compileAll config = do
   forM_ oldFiles $ \f -> do
     removeFile f
     verbosePut config $ "Removed orphaned " ++ jsRelativePath f
-
-  where
-    -- Convert back and forth between the filepaths of hs and js files.
 
 
 -- | Helpers

@@ -31,8 +31,8 @@
       </div>
 
       <br>
-
-      <div><a href="/fay/BrokenFile.js">See what happens when you try to load a file containing Syntax errors</a></div>
+      <div><a href="/static/broken.html">See what happens when you try to load a html file referencing a Fay file containing Syntax errors.</a></div>
+      
       <br>
     </div>
   </body>
