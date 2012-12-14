@@ -48,8 +48,8 @@ compileFile config f = do
       putStrLn $ "snaplet-fay: Could not find: " ++ hsRelativePath f
       return NotFound
     else do
-      res <- F.compileFile def { F.configDirectoryIncludes = includeDirs config
-                               , F.configPrettyPrint = prettyPrint config } f
+      res <- F.compileFile (F.addConfigDirectoryIncludes (includeDirs config) 
+                            def { F.configPrettyPrint = prettyPrint config }) f
       case res of
         Right out -> do
           verbosePut config $ "Compiled " ++ hsRelativePath f
