@@ -25,6 +25,13 @@ Features
   using the fayax functions.
 
 
+Changelog
+---------
+
+0.3.0.1:
+
+* Bump to support snap 0.10 and fay 0.11
+
 Installation
 ------------
 
