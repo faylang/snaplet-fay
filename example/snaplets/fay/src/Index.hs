@@ -32,11 +32,12 @@ onload = void $ do
   setHtml "This element was created by Fay through an onload handler!" div
   appendTo contents div
 
-  setTimeout 5000 currentTime
+  currentTime
+  setInterval 2000 currentTime
 
 currentTime :: Fay ()
 currentTime =
-  ajaxJson "/ajax/current-time" $ \(Time time) -> void $ select "#current-time" >>= setHtml time
+  ajaxGet "/ajax/current-time" (\(Time time) -> void $ select "#current-time" >>= setHtml time) emptyErrorHandler
 
 formOnload :: String -> Fay () -> Fay ()
 formOnload buttonSel getForm = void $ select buttonSel >>= click (const getForm)
@@ -50,11 +51,11 @@ loginOnload = formOnload "#viewLoginForm" requestLoginHtml
 requestHtml :: String -> Fay () -> Fay ()
 requestHtml url submitAction = do
   formContainer <- select "#formContainer"
-  hide "slow" formContainer
+  hide Slow formContainer
   ajaxHtml url $ \h -> void $ do
     setHtml h formContainer
     child "form" formContainer >>= submit (\e -> preventDefault e >> submitAction)
-    jShow "slow" formContainer
+    jshow Slow formContainer
 
 requestRegisterHtml :: Fay ()
 requestRegisterHtml = requestHtml "/ajax/register-form" submitRegister
@@ -69,7 +70,7 @@ submitRegister = do
     Fail -> select "#loginStatus" >>= showStatus Error "Oops! Username taken or fields have length < 4"
     OK -> do
       select "#loginStatus" >>= showStatus Notice "Account created!"
-      select "#formContainer" >>= hide "fast" >> requestLoginHtml
+      select "#formContainer" >>= hide Fast >> requestLoginHtml
 
 submitLogin :: Fay ()
 submitLogin = do
@@ -79,10 +80,10 @@ submitLogin = do
     BadLogin -> select "#loginStatus" >>= showStatus Error "Oops! Bad login information!"
     LoggedIn -> void $ do
       select "#loginStatus" >>= showStatus Notice "Logged in! Too bad there is no additional functionality for you now."
-      select "#formContainer" >>= hide "fast"
+      select "#formContainer" >>= hide Fast
 
 submitLogout :: Fay ()
-submitLogout = ajax "/ajax/logout" (void $ select "#loginStatus" >>= showStatus Notice "You have been logged out.")
+submitLogout = ajaxSkipResponse "/ajax/logout" (void $ select "#loginStatus" >>= showStatus Notice "You have been logged out.") emptyErrorHandler
 
 data Status = Error | Notice
 
@@ -92,34 +93,25 @@ statusClass Notice = "notice"
 
 showStatus :: Status -> String -> JQuery -> Fay ()
 showStatus status msg el = void $
-  return el >>= hide "fast" >>=
+  return el >>= hide Fast >>=
     removeClass (statusClass Error) >>= removeClass (statusClass Notice) >>=
       setHtml msg >>=
         addClass (statusClass status) >>=
-          jShow "fast"
+          jshow Fast >> return ()
 
 formJson :: Foreign f => JQuery -> Fay f
 formJson = ffi "Helpers.formJson(%1)"
 
 -- jQuery additions
 
+emptyErrorHandler :: a -> b -> c -> Fay ()
+emptyErrorHandler _ _ _ = return ()
+
 jPost :: (Foreign f, Foreign g) => String -> f -> (g -> Fay ()) -> Fay ()
 jPost = ffi "jQuery.ajax(%1, { data: JSON.stringify(%2), type: 'POST', processData: false, contentType: 'text/json', success: %3 })"
 
-ajax :: String -> Fay () -> Fay ()
-ajax = ffi "jQuery.ajax(%1, { success : %2 })"
-
-ajaxJson :: Foreign f => String -> (f -> Fay ()) -> Fay ()
-ajaxJson = ffi "jQuery.ajax(%1, { success : %2 })"
-
 ajaxHtml :: String -> (String -> Fay()) -> Fay ()
 ajaxHtml = ffi "jQuery.ajax(%1, { success : %2 })"
-
-hide :: String -> JQuery -> Fay JQuery
-hide = ffi "jQuery(%2).hide(%1)"
-
-jShow :: String -> JQuery -> Fay JQuery
-jShow = ffi "jQuery(%2).show(%1)"
 
 child :: String -> JQuery -> Fay JQuery
 child = ffi "jQuery(%1,%2)"
