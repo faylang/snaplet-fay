@@ -51,11 +51,20 @@ initFay = makeSnaplet "fay" description datadir $ do
     includeDirs      <- logErr "Must specify includeDirs" $ C.lookup config "includeDirs"
     let inc = maybe [] (split ',') includeDirs
     inc' <- liftIO $ mapM canonicalizePath inc
-    return (verbose, compileMode, prettyPrint, inc')
+    packages         <- logErr "Must specify packages" $ C.lookup config "packages"
+    let packs = maybe [] (split ',') packages
+    return (verbose, compileMode, prettyPrint, inc', packs)
 
   let fay = case opts of
-              (Just verbose, Just compileMode, Just prettyPrint, includeDirs) ->
-                Fay fp verbose compileMode prettyPrint (fp : includeDirs)
+              (Just verbose, Just compileMode, Just prettyPrint, includeDirs, packages) ->
+                Fay
+                  { snapletFilePath = fp
+                  , verbose         = verbose
+                  , compileMode     = compileMode
+                  , prettyPrint     = prettyPrint
+                  , _includeDirs    = fp : includeDirs
+                  , packages        = packages
+                  }
               _ -> error $ intercalate "\n" errs
 
   -- Make sure snaplet/fay, snaplet/fay/src, snaplet/fay/js are present.

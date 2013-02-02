@@ -1,12 +1,18 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE FlexibleInstances  #-}
-{-# LANGUAGE NoImplicitPrelude  #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE CPP #-}
 
 module Application.SharedTypes where
 
+#ifdef FAY
+import           FFI
+import           Prelude
+#else
 import           Language.Fay.FFI
-import           Language.Fay.Prelude
+#endif
+import           Data.Data
+
 
 data Time = Time { time :: String }
             deriving (Read,Data,Typeable,Show)

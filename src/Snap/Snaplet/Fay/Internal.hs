@@ -15,11 +15,12 @@ import           System.FilePath
 -- | Configuration
 data Fay = Fay {
     snapletFilePath :: FilePath
-  , verbose :: Bool
-  , compileMode :: CompileMode
-  , prettyPrint :: Bool
-  , _includeDirs :: [FilePath]
-  }
+  , verbose         :: Bool
+  , compileMode     :: CompileMode
+  , prettyPrint     :: Bool
+  , _includeDirs    :: [FilePath]
+  , packages        :: [String]
+  } deriving (Show)
 
 -- | Location of .hs files
 srcDir :: Fay -> FilePath
@@ -35,7 +36,7 @@ includeDirs config = srcDir config : _includeDirs config
 
 -- | Compile on every request or when Snap starts.
 data CompileMode = Development | Production
-                 deriving Eq
+  deriving (Eq, Show)
 
 -- | Used by callers of compileFile to get the status of compilation.
 data CompileResult = Success String | NotFound | Error String
@@ -50,8 +51,19 @@ compileFile config f = do
       putStrLn $ "snaplet-fay: Could not find: " ++ hsRelativePath f
       return NotFound
     else do
-      res <- F.compileFile (F.addConfigDirectoryIncludes (includeDirs config)
-                            def { F.configPrettyPrint = prettyPrint config }) f
+      print config
+      putStrLn ""
+      let cfg' = F.addConfigPackages (packages config) $ F.addConfigDirectoryIncludes (includeDirs config) $ def { F.configPrettyPrint = prettyPrint config }
+      print cfg'
+      putStrLn ""
+      f' <- canonicalizePath f
+      print f'
+      putStrLn ""
+      res <- flip F.compileFile f' $ F.addConfigPackages (packages config) $
+                                      F.addConfigDirectoryIncludes (includeDirs config) $
+                                        def { F.configPrettyPrint = prettyPrint config
+                                            , F.configFilePath = Just f'
+                                            }
       case res of
         Right out -> do
           verbosePut config $ "Compiled " ++ hsRelativePath f
