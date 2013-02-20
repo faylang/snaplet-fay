@@ -45,9 +45,9 @@ library
     configurator >= 0.2,
     data-default >= 0.5,
     directory    >= 1.1,
-    fay          >= 0.12,
+    fay          >= 0.14.1,
     filepath     >= 1.3,
     mtl          >= 2.1,
-    snap         >= 0.9 && < 0.11,
-    snap-core    >= 0.9,
+    snap         >= 0.11.1,
+    snap-core    >= 0.9.3.1,
     transformers >= 0.3

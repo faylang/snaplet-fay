@@ -7,7 +7,8 @@ import           Control.Monad
 import qualified Data.Aeson as A
 import qualified Data.ByteString.Lazy.Char8 as C
 import           Data.Default
-import qualified Language.Fay        as F
+import qualified Fay as F
+import qualified Fay.Compiler.Config as F
 import           System.Directory
 import           System.FilePath
 
@@ -53,14 +54,14 @@ compileFile config f = do
     else do
       print config
       putStrLn ""
-      let cfg' = F.addConfigPackages (packages config) $ F.addConfigDirectoryIncludes (includeDirs config) $ def { F.configPrettyPrint = prettyPrint config }
+      let cfg' = F.addConfigPackages (packages config) $ F.addConfigDirectoryIncludePaths (includeDirs config) $ def { F.configPrettyPrint = prettyPrint config }
       print cfg'
       putStrLn ""
       f' <- canonicalizePath f
       print f'
       putStrLn ""
       res <- flip F.compileFile f' $ F.addConfigPackages (packages config) $
-                                      F.addConfigDirectoryIncludes (includeDirs config) $
+                                      F.addConfigDirectoryIncludePaths (includeDirs config) $
                                         def { F.configPrettyPrint = prettyPrint config
                                             , F.configFilePath = Just f'
                                             }

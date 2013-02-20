@@ -13,7 +13,7 @@ import Application.SharedTypes
 -- | Location: snaplets/fay/src
 import Dom
 -- | The fay-jquery package
-import Language.Fay.JQuery
+import JQuery
 
 void :: Fay f -> Fay ()
 void f = f >> return ()
@@ -57,7 +57,7 @@ requestHtml url submitAction = do
     jshow Slow formContainer
     return ())
 
-typeof :: Foreign f => f -> String
+typeof :: f -> String
 typeof = ffi "typeof %1"
 
 requestRegisterHtml :: Fay ()
@@ -102,7 +102,7 @@ showStatus status msg el = void $
         addClass (statusClass status) >>=
           jshow Fast >> return ()
 
-formJson :: Foreign f => JQuery -> Fay f
+formJson :: JQuery -> Fay f
 formJson = ffi "Helpers.formJson(%1)"
 
 -- jQuery additions

@@ -25,7 +25,7 @@ import           Data.Data
 import           Data.List
 import           Data.Maybe
 import           Data.String
-import           Language.Fay.Convert
+import           Fay.Convert
 import           Snap.Core
 import           Snap.Snaplet
 import           Snap.Util.FileServe
