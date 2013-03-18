@@ -28,6 +28,11 @@ Features
 Changelog
 ---------
 
+0.3.1.0:
+
+* Add `packages` flag in the config which lets you use other fay packages without using includeDirs
+* On errors in development mode a js file is produced that prints the error to the console (Thanks Daniel Bruegmann)
+
 0.3.0.1:
 
 * Bump to support snap 0.10 and fay 0.11
