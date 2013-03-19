@@ -52,14 +52,7 @@ compileFile config f = do
       putStrLn $ "snaplet-fay: Could not find: " ++ hsRelativePath f
       return NotFound
     else do
-      print config
-      putStrLn ""
-      let cfg' = F.addConfigPackages (packages config) $ F.addConfigDirectoryIncludePaths (includeDirs config) $ def { F.configPrettyPrint = prettyPrint config }
-      print cfg'
-      putStrLn ""
       f' <- canonicalizePath f
-      print f'
-      putStrLn ""
       res <- flip F.compileFile f' $ F.addConfigPackages (packages config) $
                                       F.addConfigDirectoryIncludePaths (includeDirs config) $
                                         def { F.configPrettyPrint = prettyPrint config
