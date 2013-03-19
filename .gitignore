@@ -4,7 +4,5 @@ TAGS
 cabal-dev
 dist
 example/fay
-example/log
 example/site_key.txt
-example/snaplets/fay/js
 example/users.json
