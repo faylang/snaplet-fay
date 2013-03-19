@@ -28,6 +28,11 @@ Features
 Changelog
 ---------
 
+0.3.1.1.:
+
+* Hackage version now includes the example application
+* Updated repository location
+
 0.3.1.0:
 
 * Add `packages` flag in the config which lets you use other fay packages without using includeDirs
@@ -82,7 +87,7 @@ the recommended ones for development.
 
 Place your Fay .hs files in snaplets/fay/src. Note that a default
 devel.cfg will not be created if you have already created the fay
-directory, if this happens to you move snaplets/fay, start your
+directory. If this happens to you, move snaplets/fay, start your
 application, and then move the files back into snaplets/fay.
 
 Any requests to the specified directory (in this case /fay/) will
@@ -93,7 +98,7 @@ Example Application
 -------------------
 
 There is an example available in the `example` directory. It requires
-[fay-jquery](http://www.github.com/faylang/fay-jquery).
+fay-jquery [hackage](http://hackage.haskell.org/package/fay-jquery) [github](http://www.github.com/faylang/fay-jquery).
 
 
 Development Status
@@ -110,7 +115,7 @@ Fork on!
 
 Any enhancements are welcome.
 
-The github master usually requires the latest fay master, available at
+The github master may require the latest fay master, available at
 [faylang/fay](https://github.com/faylang/fay/).
 
 
