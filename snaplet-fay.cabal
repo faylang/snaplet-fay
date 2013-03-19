@@ -8,13 +8,13 @@ name:                snaplet-fay
 version:             0.3.1.0
 synopsis:            Fay integration for Snap with request- and pre-compilation.
 description:         Fay integration for Snap with request based compilation during development and precompilation in production.
-                     For more information, please see <https://github.com/faylang/snaplet-fay>.
+                     For more information, please see <https://github.com/bergmark/snaplet-fay>.
 license:             BSD3
 license-file:        LICENSE
 author:              Adam Bergmark
 maintainer:          adam@edea.se
-homepage:            https://github.com/faylang/snaplet-fay
-bug-reports:         https://github.com/faylang/snaplet-fay/issues
+homepage:            https://github.com/bergmark/snaplet-fay
+bug-reports:         https://github.com/bergmark/snaplet-fay/issues
 category:            Web, Snap
 build-type:          Simple
 cabal-version:       >=1.8
@@ -26,7 +26,7 @@ data-files:
 
 source-repository head
   type: git
-  location: https://github.com/faylang/snaplet-fay.git
+  location: https://github.com/bergmark/snaplet-fay.git
 
 library
   ghc-options: -Wall
