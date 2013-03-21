@@ -34,9 +34,10 @@ library
 
   exposed-modules:
     Snap.Snaplet.Fay
+    Snap.Snaplet.Fay.Internal
 
   other-modules:
-    Snap.Snaplet.Fay.Internal, Paths_snaplet_fay
+    Paths_snaplet_fay
 
   build-depends:
       base         >= 4 && < 5
