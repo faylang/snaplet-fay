@@ -28,6 +28,10 @@ Features
 Changelog
 ---------
 
+0.3.2.0:
+
+* Expose Snap.Snaplet.Fay.Internal
+
 0.3.1.1.:
 
 * Hackage version now includes the example application
