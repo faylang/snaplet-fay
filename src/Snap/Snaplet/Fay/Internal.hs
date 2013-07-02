@@ -1,4 +1,5 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ViewPatterns        #-}
 
 module Snap.Snaplet.Fay.Internal where
 
@@ -68,7 +69,7 @@ compileFile config f = do
           putStrLn errString
           -- return Success so the browser will treat this as a normal JavaScript file.
           -- As of writing this, this means that Error is not used.
-          return $ Error $ "console.error(" ++ (C.unpack . A.encode) errString ++ ");"
+          return $ Error $ "console.error(" ++ errString ++ ");"
 
 -- | Checks the specified source folder and compiles all new and modified scripts.
 -- Also removes any js files whose Fay source has been deleted.
