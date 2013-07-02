@@ -1,4 +1,4 @@
-{-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Snap.Snaplet.Fay.Internal where
 
@@ -64,11 +64,11 @@ compileFile config f = do
           writeFile (jsPath config f) out
           return $ Success out
         Left err -> do
-          let errString = "snaplet-fay: Error compiling " ++ hsRelativePath f ++ ":\n" ++ show err
+          let errString = C.unpack . A.encode $ "snaplet-fay: Error compiling " ++ hsRelativePath f ++ ":\n" ++ F.showCompileError err
           putStrLn errString
           -- return Success so the browser will treat this as a normal JavaScript file.
           -- As of writing this, this means that Error is not used.
-          return $ Success $ "console.error('" ++ (C.unpack . A.encode) errString ++ "');"
+          return $ Error $ "console.error(" ++ (C.unpack . A.encode) errString ++ ");"
 
 -- | Checks the specified source folder and compiles all new and modified scripts.
 -- Also removes any js files whose Fay source has been deleted.

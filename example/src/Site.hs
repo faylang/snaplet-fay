@@ -43,7 +43,7 @@ register (UserRegister u p pc)
 login :: UserLogin -> Handler App (AuthManager App) UserLoginResponse
 login (UserLogin u p r) =
   either (return BadLogin) (return LoggedIn) <$>
-    loginByUsername (BS.pack u) (ClearText $ BS.pack p) r
+    loginByUsername (T.pack u) (ClearText $ BS.pack p) r
 
 ------------------------------------------------------------------------------
 -- | The application's routes.
@@ -69,6 +69,6 @@ app = makeSnaplet "app" "An snaplet example application." Nothing $ do
     h <- nestSnaplet "" heist $ heistInit "templates"
     f <- nestSnaplet "fay" fay $ initFay
     a <- nestSnaplet "auth" auth $ initJsonFileAuthManager defAuthSettings session "users.json"
-    addAuthSplices auth
+    addAuthSplices h auth
     addRoutes routes
     return $ App h f s a

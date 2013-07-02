@@ -151,7 +151,7 @@ compileWithMode Development = do
   case res of
     Success s -> writeBS $ fromString s
     NotFound -> send404 Nothing
-    Error err -> send500 . Just . BS.pack $ err
+    Error err -> writeBS $ fromString err
 -- Production compilation has already been done.
 compileWithMode Production = get >>= serveDirectory . destDir
 
