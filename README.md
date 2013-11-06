@@ -28,6 +28,15 @@ Features
 Changelog
 ---------
 
+0.3.3.0:
+
+* Format Fay compile errors using Fay's builtin (doesn't break on apostrophes)
+* Only treat compile errors as Success in development mode (for in browser error reporting)
+* Fixes a bug where error strings would be encoded twice
+* Requires fay 0.18
+* Update example for fay-jquery 0.4
+* Upper bounds for dependencies
+
 0.3.2.0:
 
 * Expose Snap.Snaplet.Fay.Internal
