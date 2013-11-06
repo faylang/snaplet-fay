@@ -8,8 +8,8 @@ module Site
 import           Control.Applicative
 import           Control.Monad.Trans
 import           Data.ByteString                             (ByteString)
-import qualified Data.ByteString.Char8                       as BS
 import qualified Data.Text                                   as T
+import qualified Data.Text.Encoding                          as T
 import           Data.Time.Clock
 import           Snap.Snaplet
 import           Snap.Snaplet.Auth                           hiding (session)
@@ -24,7 +24,7 @@ import           Application.SharedTypes
 
 
 currentTimeAjax :: AppHandler Time
-currentTimeAjax = Time . show <$> liftIO getCurrentTime
+currentTimeAjax = Time . T.pack . show <$> liftIO getCurrentTime
 
 -- TODO this can be handled automatically by heistServe
 registerForm :: AppHandler ()
@@ -34,16 +34,15 @@ loginForm = render "login-form"
 
 register :: UserRegister -> Handler App (AuthManager App) UserRegisterResponse
 register (UserRegister u p pc)
-  | length u < 4 || length p < 4 || p /= pc = return Fail
+  | T.length u < 4 || T.length p < 4 || p /= pc = return Fail
   | otherwise = do
-    let u' = T.pack u
-    exists <- usernameExists u'
-    if exists then return Fail else (createUser u' (BS.pack p) >> return OK)
+    exists <- usernameExists u
+    if exists then return Fail else (createUser u (T.encodeUtf8 p) >> return OK)
 
 login :: UserLogin -> Handler App (AuthManager App) UserLoginResponse
 login (UserLogin u p r) =
   either (return BadLogin) (return LoggedIn) <$>
-    loginByUsername (T.pack u) (ClearText $ BS.pack p) r
+    loginByUsername u (ClearText $ T.encodeUtf8 p) r
 
 ------------------------------------------------------------------------------
 -- | The application's routes.

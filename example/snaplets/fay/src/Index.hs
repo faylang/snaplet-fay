@@ -1,19 +1,22 @@
 {-# LANGUAGE EmptyDataDecls    #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RebindableSyntax  #-}
 {-# OPTIONS -Wall -fno-warn-name-shadowing -fno-warn-unused-do-bind #-}
 
 module Index where
 
-import FFI
-import Prelude
+import           Fay.Text                (Text, fromString)
+import           FFI
+import           Prelude
 
 -- | Time is shared between Snap and Fay
 -- | Location: snaplets/fay/src/Application/SharedTypes.hs
-import Application.SharedTypes
+import           Application.SharedTypes
 -- | Dom is a Fay only module
 -- | Location: snaplets/fay/src
-import Dom
+import           Dom
 -- | The fay-jquery package
-import JQuery
+import           JQuery
 
 void :: Fay f -> Fay ()
 void f = f >> return ()
@@ -38,7 +41,7 @@ currentTime :: Fay ()
 currentTime =
   ajaxJson "/ajax/current-time" (\(Time time) -> void $ select "#current-time" >>= setHtml time)
 
-formOnload :: String -> Fay () -> Fay ()
+formOnload :: Text -> Fay () -> Fay ()
 formOnload buttonSel getForm = void $ select buttonSel >>= click (const getForm)
 
 registrationOnload :: Fay ()
@@ -47,7 +50,7 @@ registrationOnload = formOnload "#viewRegisterForm" requestRegisterHtml
 loginOnload :: Fay ()
 loginOnload = formOnload "#viewLoginForm" requestLoginHtml
 
-requestHtml :: String -> Fay () -> Fay ()
+requestHtml :: Text -> Fay () -> Fay ()
 requestHtml url submitAction = do
   formContainer <- select "#formContainer"
   hide Slow formContainer
@@ -57,7 +60,7 @@ requestHtml url submitAction = do
     jshow Slow formContainer
     return ())
 
-typeof :: f -> String
+typeof :: f -> Text
 typeof = ffi "typeof %1"
 
 requestRegisterHtml :: Fay ()
@@ -90,11 +93,11 @@ submitLogout = ajaxJson "/ajax/logout" (\_ -> void $ select "#loginStatus" >>= s
 
 data Status = Error | Notice
 
-statusClass :: Status -> String
+statusClass :: Status -> Text
 statusClass Error = "error"
 statusClass Notice = "notice"
 
-showStatus :: Status -> String -> JQuery -> Fay ()
+showStatus :: Status -> Text -> JQuery -> Fay ()
 showStatus status msg el = void $
   return el >>= hide Fast >>=
     removeClass (statusClass Error) >>= removeClass (statusClass Notice) >>=
@@ -107,11 +110,11 @@ formJson = ffi "Helpers.formJson(%1)"
 
 -- jQuery additions
 
-jPost :: String -> Automatic f -> (Automatic g -> Fay ()) -> Fay ()
+jPost :: Text -> Automatic f -> (Automatic g -> Fay ()) -> Fay ()
 jPost = ffi "jQuery.ajax(%1, { data: JSON.stringify(%2), type: 'POST', processData: false, contentType: 'text/json', success: %3 })"
 
-ajaxHtml :: String -> (String -> Fay()) -> Fay ()
+ajaxHtml :: Text -> (Text -> Fay()) -> Fay ()
 ajaxHtml = ffi "jQuery.ajax(%1, { success : %2 })"
 
-ajaxJson :: String -> (Automatic f -> Fay ()) -> Fay ()
+ajaxJson :: Text -> (Automatic f -> Fay ()) -> Fay ()
 ajaxJson = ffi "jQuery.ajax(%1, { success : %2 })"

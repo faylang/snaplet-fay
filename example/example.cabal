@@ -24,7 +24,8 @@ Executable example
     , aeson >= 0.6
     , bytestring >= 0.9
     , fay
-    , fay-jquery
+    , fay-text == 0.2.*
+    , fay-jquery == 0.4.*
     , heist >= 0.8
     , lens >= 3.7
     , mtl >= 2
