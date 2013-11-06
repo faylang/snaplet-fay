@@ -60,7 +60,7 @@ compileFile config f = do
                                             , F.configFilePath = Just f'
                                             }
       case res of
-        Right out -> do
+        Right (out, _sourceMap) -> do
           verbosePut config $ "Compiled " ++ hsRelativePath f
           writeFile (jsPath config f) out
           return $ Success out
