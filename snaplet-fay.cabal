@@ -19,7 +19,22 @@ category:            Web, Snap, Fay
 build-type:          Simple
 cabal-version:       >=1.8
 
-extra-source-files:  LICENSE, README.md example/example.cabal example/snaplets/fay/devel.cfg example/snaplets/fay/js/.gitignore example/snaplets/fay/src/Application/SharedTypes.hs example/snaplets/fay/src/BrokenFile.hs example/snaplets/fay/src/Dom.hs example/snaplets/fay/src/Index.hs example/snaplets/heist/templates/index.tpl example/snaplets/heist/templates/login-form.tpl example/snaplets/heist/templates/register-form.tpl example/log/.gitignore example/src/Application.hs example/src/Main.hs example/src/Site.hs example/static/broken.html example/static/index.js example/static/jquery.js example/static/screen.css example/static/underscore.js
+extra-source-files:
+  LICENSE
+  README.md
+  CHANGELOG.md
+  --- Example
+  example/example.cabal
+  example/snaplets/fay/devel.cfg
+  example/snaplets/fay/js/.gitignore
+  example/snaplets/fay/src/Application/*.hs
+  example/snaplets/fay/src/*.hs
+  example/snaplets/heist/templates/*.tpl
+  example/log/.gitignore
+  example/src/*.hs
+  example/static/*.html
+  example/static/*.js
+  example/static/*.css
 
 data-files:
   resources/devel.cfg
