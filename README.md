@@ -28,7 +28,11 @@ Features
 Changelog
 ---------
 
-0.3.3.0:
+0.3.3.1 (2013-11-07):
+
+* Allow fay-jquery 0.5
+
+0.3.3.0 (2013-11-07):
 
 * Format Fay compile errors using Fay's builtin (doesn't break on apostrophes)
 * Only treat compile errors as Success in development mode (for in browser error reporting)
