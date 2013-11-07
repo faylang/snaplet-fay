@@ -1,5 +1,10 @@
 ## Changelog
 
+#### 0.3.3.2 (2013-11-07)
+
+* example: Allow fay-text 0.3
+* example: Remove bounds on snaplet-fay
+
 #### 0.3.3.1 (2013-11-07)
 
 * Allow fay-jquery 0.5
