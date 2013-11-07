@@ -1,0 +1,32 @@
+## Changelog
+
+#### 0.3.3.1 (2013-11-07)
+
+* Allow fay-jquery 0.5
+
+### 0.3.3 (2013-11-07)
+
+* Format Fay compile errors using Fay's builtin (doesn't break on apostrophes)
+* Only treat compile errors as Success in development mode (for in browser error reporting)
+* Fixes a bug where error strings would be encoded twice
+* Requires fay 0.18
+* Update example for fay-jquery 0.4
+* Upper bounds for dependencies
+
+### 0.3.2.0
+
+* Expose Snap.Snaplet.Fay.Internal
+
+### 0.3.1.1
+
+* Hackage version now includes the example application
+* Updated repository location
+
+### 0.3.1.0
+
+* Add `packages` flag in the config which lets you use other fay packages without using includeDirs
+* On errors in development mode a js file is produced that prints the error to the console (Thanks Daniel Bruegmann)
+
+#### 0.3.0.1
+
+* Bump to support snap 0.10 and fay 0.11
