@@ -12,7 +12,7 @@ description:         Fay integration for Snap with request based compilation dur
 license:             BSD3
 license-file:        LICENSE
 author:              Adam Bergmark
-maintainer:          adam@edea.se
+maintainer:          adam@bergmark.nl
 homepage:            https://github.com/faylang/snaplet-fay
 bug-reports:         https://github.com/faylang/snaplet-fay/issues
 category:            Web, Snap, Fay
@@ -24,6 +24,7 @@ extra-source-files:
   README.md
   CHANGELOG.md
   --- Example
+  example/LICENSE
   example/example.cabal
   example/snaplets/fay/devel.cfg
   example/snaplets/fay/js/.gitignore
