@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 0.3.3.3 (2014-01-17)
+
+* Allow fay 0.19.*
+
 #### 0.3.3.2 (2013-11-07)
 
 * example: Allow fay-text 0.3
