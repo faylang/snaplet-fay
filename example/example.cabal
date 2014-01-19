@@ -25,19 +25,19 @@ Executable example
     , aeson >= 0.6
     , bytestring >= 0.9
     , fay
-    , fay-text >= 0.2 && < 0.4
-    , fay-jquery >= 0.4 && < 0.6
-    , heist >= 0.8 && < 0.14
-    , lens >= 3.7 && < 3.11
+    , fay-text >= 0.2
+    , fay-jquery == 0.6.*
+    , heist >= 0.8
+    , lens >= 3.7
     , mtl >= 2
     , snap >= 0.9
     , snap-core >= 0.9
-    , snap-loader-static == 0.9.*
-    , snap-server == 0.9.*
+    , snap-loader-static >= 0.9
+    , snap-server >= 0.9
     , snaplet-fay
-    , text == 0.11.*
-    , time >= 1.1 && < 1.5
-    , xmlhtml >= 0.1 && < 0.3
+    , text >= 0.11
+    , time >= 1.1
+    , xmlhtml >= 0.1
 
   if flag(development)
     build-depends:
