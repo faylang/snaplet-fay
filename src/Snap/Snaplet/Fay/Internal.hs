@@ -5,14 +5,12 @@ module Snap.Snaplet.Fay.Internal where
 
 import           Control.Applicative
 import           Control.Monad
-import qualified Data.Aeson as A
+import qualified Data.Aeson                 as A
 import qualified Data.ByteString.Lazy.Char8 as C
 import           Data.Default
-import qualified Fay as F
-import qualified Fay.Compiler.Config as F
+import qualified Fay                        as F
 import           System.Directory
 import           System.FilePath
-
 
 -- | Configuration
 data Fay = Fay {
@@ -60,7 +58,7 @@ compileFile config f = do
                                             , F.configFilePath = Just f'
                                             }
       case res of
-        Right (out, _sourceMap) -> do
+        Right out -> do
           verbosePut config $ "Compiled " ++ hsRelativePath f
           writeFile (jsPath config f) out
           return $ Success out

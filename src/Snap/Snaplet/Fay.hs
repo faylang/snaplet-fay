@@ -112,7 +112,7 @@ fayServe = do
 -- | JSON response.
 -- | If you only want to send JSON and handle input manually, use toFayax.
 -- | If you want to receive JSON and handle the response manually, use fromFayax
-fayax :: (Data f1, Read f1, Show f2) => (f1 -> Handler h1 h2 f2) -> Handler h1 h2 ()
+fayax :: (Data f1, Read f1, Data f2) => (f1 -> Handler h1 h2 f2) -> Handler h1 h2 ()
 fayax g = do
   res <- decode
   case res of
@@ -120,7 +120,7 @@ fayax g = do
     Right res -> toFayax . g $ res
 
 -- | fayax only sending JSON.
-toFayax :: Show f2 => Handler h1 h2 f2 -> Handler h1 h2 ()
+toFayax :: Data f2 => Handler h1 h2 f2 -> Handler h1 h2 ()
 toFayax g = do
   modifyResponse . setContentType $ "text/json;charset=utf-8"
   writeLBS . A.encode . showToFay =<< g
