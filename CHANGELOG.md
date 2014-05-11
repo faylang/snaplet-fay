@@ -1,5 +1,10 @@
 ## Changelog
 
+#### 0.3.3.6 (2014-05-11)
+
+* Allow `mtl 2.2.*`
+* Allow `transformers >= 0.4.1 && < 0.5`
+
 #### 0.3.3.5 (2014-04-29)
 
 * Update to `fay 0.20`
