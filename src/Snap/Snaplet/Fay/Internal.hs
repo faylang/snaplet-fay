@@ -7,7 +7,6 @@ import           Control.Applicative
 import           Control.Monad
 import qualified Data.Aeson                 as A
 import qualified Data.ByteString.Lazy.Char8 as C
-import           Data.Default
 import qualified Fay                        as F
 import           System.Directory
 import           System.FilePath
@@ -52,9 +51,10 @@ compileFile config f = do
       return NotFound
     else do
       f' <- canonicalizePath f
+      defConfig <- F.defaultConfigWithSandbox
       res <- flip F.compileFile f' $ F.addConfigPackages (packages config) $
                                       F.addConfigDirectoryIncludePaths (includeDirs config) $
-                                        def { F.configPrettyPrint = prettyPrint config
+                                        defConfig { F.configPrettyPrint = prettyPrint config
                                             , F.configFilePath = Just f'
                                             }
       case res of
