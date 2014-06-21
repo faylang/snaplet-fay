@@ -52,11 +52,13 @@ compileFile config f = do
     else do
       f' <- canonicalizePath f
       defConfig <- F.defaultConfigWithSandbox
-      res <- flip F.compileFile f' $ F.addConfigPackages (packages config) $
-                                      F.addConfigDirectoryIncludePaths (includeDirs config) $
-                                        defConfig { F.configPrettyPrint = prettyPrint config
-                                            , F.configFilePath = Just f'
-                                            }
+      res <- flip F.compileFile f'
+           . F.addConfigPackages (packages config)
+           . F.addConfigDirectoryIncludePaths (includeDirs config)
+           $ defConfig
+               { F.configPrettyPrint = prettyPrint config
+               , F.configFilePath = Just f'
+               }
       case res of
         Right out -> do
           verbosePut config $ "Compiled " ++ hsRelativePath f
