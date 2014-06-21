@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 0.3.3.7 (2014-05-12)
+
+* Take `HASKELL_PACKAGE_SANDBOX` into account when compiling Fay code
+
 #### 0.3.3.6 (2014-05-11)
 
 * Allow `mtl 2.2.*`
