@@ -43,7 +43,8 @@ Example Usage
 -------------
 
 Site.hs:
-```
+
+```haskell
 import Snap.Snaplet.Fay
 
 routes = [..., ("/fay", with fay fayServe)]
@@ -55,7 +56,8 @@ app = makeSnaplet "app" "A snaplet example application." Nothing $ do
 ```
 
 Application.hs:
-```
+
+```haskell
 import Snap.Snaplet.Fay
 
 data App = App { _fay :: Snaplet Fay }
