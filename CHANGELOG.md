@@ -4,6 +4,10 @@
 
 * Take `HASKELL_PACKAGE_SANDBOX` into account when compiling Fay code
 
+##### Revision 1
+
+* Allow `configurator == 0.3.*`
+
 #### 0.3.3.6 (2014-05-11)
 
 * Allow `mtl 2.2.*`
