@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 0.3.3.8 (2014-10-11)
+
+* Allow `fay 0.21.*`
+
 #### 0.3.3.7 (2014-05-12)
 
 * Take `HASKELL_PACKAGE_SANDBOX` into account when compiling Fay code
