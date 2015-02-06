@@ -4,7 +4,7 @@ Snaplet Fay
 [Changelog](CHANGELOG.md)
 
 Snaplet Fay integrates [Snap](http://www.snapframework.com) with
-[Fay](http://www.fay-lang.org). Snap is a
+[Fay](http://www.github.com/faylang/fay/wiki). Snap is a
 [Haskell](http://www.haskell.org) web framework and Fay is a compiler
 from a proper subset of Haskell to JavaScript. Snaplet Fay integrates
 them nicely with each other allowing automatic (re)compilation of Fay
