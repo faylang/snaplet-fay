@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 0.3.3.12
+
+* Allow `aeson 0.9.*`
+
 #### 0.3.3.11
 
 * Allow `snap 0.14.*`

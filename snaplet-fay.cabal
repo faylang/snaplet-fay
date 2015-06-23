@@ -1,5 +1,5 @@
 name:                snaplet-fay
-version:             0.3.3.11
+version:             0.3.3.12
 synopsis:            Fay integration for Snap with request- and pre-compilation.
 description:         Fay integration for Snap with request based compilation during development and precompilation in production.
                      For more information, please see <https://github.com/bergmark/snaplet-fay>.
@@ -51,7 +51,7 @@ library
 
   build-depends:
       base         >= 4 && < 5
-    , aeson        >= 0.6 && < 0.9
+    , aeson        >= 0.6 && < 0.10
     , bytestring   >= 0.9 && < 0.11
     , configurator >= 0.2 && < 0.4
     , directory    >= 1.1 && < 1.3
