@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 0.3.3.13
+
+* Allow `aeson 0.10.*`
+
 #### 0.3.3.12
 
 * Allow `aeson 0.9.*`
