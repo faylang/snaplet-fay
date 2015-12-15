@@ -1,25 +1,28 @@
-Name:                example
-Version:             0.1
-Synopsis:            Project Synopsis Here
-Description:         Project Description Here
+name:                example
+version:             0.1
+synopsis:            Project Synopsis Here
+description:         Project Description Here
 license:             BSD3
 license-file:        LICENSE
-Author:              Adam Bergmark
-Maintainer:          adam@bergmark.nl
-Stability:           Experimental
-Category:            Web
-Build-type:          Simple
-Cabal-version:       >=1.2
+author:              Adam Bergmark
+maintainer:          adam@bergmark.nl
+stability:           Experimental
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.2
 
-Flag development
-  Description: Whether to build the server in development (interpreted) mode
-  Default: False
+flag development
+  description: Whether to build the server in development (interpreted) mode
+  default: False
 
-Executable example
+executable example
   hs-source-dirs: src, snaplets/fay/src
   main-is: Main.hs
-
-  Build-depends:
+  other-modules:
+    Application
+    Application.SharedTypes
+    Site
+  build-depends:
       base >= 4
     , MonadCatchIO-transformers >= 0.2.1
     , aeson >= 0.6
@@ -32,6 +35,7 @@ Executable example
     , mtl >= 2
     , snap >= 0.9
     , snap-core >= 0.9
+    , snap-loader-dynamic >= 0.9 && < 0.11
     , snap-loader-static >= 0.9
     , snap-server >= 0.9
     , snaplet-fay
@@ -41,7 +45,6 @@ Executable example
 
   if flag(development)
     build-depends:
-      snap-loader-dynamic >= 0.9 && < 0.11
     cpp-options: -DDEVELOPMENT
     -- In development mode, speed is already going to suffer, so skip
     -- the fancy optimization flags.  Additionally, disable all
@@ -50,9 +53,5 @@ Executable example
     -- warnings allows quicker workflow.
     ghc-options: -threaded -w -Wall
   else
-    if impl(ghc >= 6.12.0)
-      ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
-                   -fno-warn-orphans -fno-warn-unused-do-bind
-    else
-      ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
-                   -fno-warn-orphans
+    ghc-options: -threaded -Wall -fwarn-tabs -funbox-strict-fields -O2
+                 -fno-warn-orphans -fno-warn-unused-do-bind
