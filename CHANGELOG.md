@@ -1,5 +1,9 @@
 ## Changelog
 
+#### 0.3.3.14
+
+* Work around inconsistent revision numbering.
+
 #### 0.3.3.13
 
 * Allow `aeson 0.10.*`
